@@ -18,10 +18,12 @@ case class MarketBook(marketId: String,
                       totalAvailable: Double,
                       crossMatching: Boolean,
                       runnersVoidable: Boolean,
-                      version: Long, runners: List[Runner])
+                      version: Long,
+                      runners: Set[Runner])
 
 object MarketBook {
+
   val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
   implicit val dateTimeReads = Reads.jodaDateReads(dateFormat)
-  implicit val formatMarketBook = Json.format[MarketBook]
+  implicit val readsMarketBook = Json.reads[MarketBook]
 }

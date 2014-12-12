@@ -74,7 +74,7 @@ final class BetfairServiceNGCommand(val config: Configuration)
 
     import spray.httpx.PlayJsonSupport._
 
-//    println(JsonrpcRequest.writesJsonrpcRequest.writes(request))
+    println(JsonrpcRequest.writesJsonrpcRequest.writes(request))
 
     val pipeline =
       addHeader("Content-Type", "application/json") ~>

@@ -3,6 +3,7 @@ package com.betfair.service
 import akka.actor.ActorSystem
 import com.betfair.Configuration
 import com.betfair.domain._
+import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
 import scala.collection.immutable.{HashSet, HashMap}
 import scala.concurrent._
@@ -15,7 +16,12 @@ object ExampleBetfairServiceNG extends App {
 
     implicit val system = ActorSystem()
     import system.dispatcher
-    val config = new Configuration("tbd", "tbd", "tbd")
+    val conf = ConfigFactory.load()
+    val appKey = conf.getString("betfairService.appKey")
+    val username  = conf.getString("betfairService.username")
+    val password = conf.getString("betfairService.password")
+
+    val config = new Configuration(appKey, username, password)
     val command = new BetfairServiceNGCommand(config)
 
     val betfairServiceNG = new BetfairServiceNG(config, command)
@@ -59,7 +65,7 @@ object ExampleBetfairServiceNG extends App {
     val listMarketCatalogueMarketFilter = new MarketFilter(eventTypeIds = Set(7), marketStartTime = marketStartTime)
     betfairServiceNG.listMarketCatalogue(listMarketCatalogueMarketFilter,
       List(MarketProjection.MARKET_START_TIME,
-      //MarketProjection.RUNNER_METADATA, // TODO need to get a json reader working for metadata
+      //MarketProjection.RUNNER_METADATA, // TODO need to get a json reader working for runner metadata
       MarketProjection.RUNNER_DESCRIPTION,
       MarketProjection.EVENT_TYPE,
       MarketProjection.EVENT,
@@ -73,13 +79,23 @@ object ExampleBetfairServiceNG extends App {
         println("error", error)
     }
 
-    // list market book
-    betfairServiceNG.listMarketBook(Set("1.116678172")
+    // list market book with Exchange Best Offers
+    val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
+    betfairServiceNG.listMarketBook(marketIds = Set("1.116715234"), priceProjection = Some(("priceProjection", priceProjection))
     ) onComplete {
       case Success(Some(listMarketBookContainer)) =>
         for (marketBook <- listMarketBookContainer.result) {
           println("Market Book is: " + marketBook)
         }
+      case Failure(error) =>
+        println("error", error)
+    }
+
+    // get exchange favourite
+    betfairServiceNG.getExchangeFavourite(marketId = "1.116715234"
+    ) onComplete {
+      case Success(Some(runner)) =>
+        println("Runner is: " + runner)
       case Failure(error) =>
         println("error", error)
     }

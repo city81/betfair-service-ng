@@ -1,6 +1,7 @@
 package com.betfair.domain
 
-import scala.reflect.runtime.universe._
+import scala.collection.mutable.Map
+
 
 case class JsonrpcRequest(jsonrpc: String = "2.0", method: String, id: String, params: Map[String, Object])
 
@@ -25,6 +26,7 @@ object JsonrpcRequest {
             case _: java.lang.Double => s -> JsString(a.toString)
             case _: MarketFilter => s -> Json.toJson(a.asInstanceOf[MarketFilter])
             case _: MarketSort => s -> Json.toJson(a.asInstanceOf[MarketSort])
+            case _: PriceProjection => s -> Json.toJson(a.asInstanceOf[PriceProjection])
             case None => s -> JsNull
             case JsArray(elements) => s -> JsArray(elements)
             case _: List[MarketProjection] => s -> Json.toJson(a.asInstanceOf[List[MarketProjection]])
