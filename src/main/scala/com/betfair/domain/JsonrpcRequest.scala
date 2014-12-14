@@ -30,6 +30,7 @@ object JsonrpcRequest {
             case None => s -> JsNull
             case JsArray(elements) => s -> JsArray(elements)
             case _: List[MarketProjection] => s -> Json.toJson(a.asInstanceOf[List[MarketProjection]])
+            case _: Set[PlaceInstruction] if s == "instructions" => s -> Json.toJson(a.asInstanceOf[Set[PlaceInstruction]])
             case _: Set[String] => s -> Json.toJson(a.asInstanceOf[Set[String]])
             case _ => s -> JsArray(a.asInstanceOf[List[Int]].map(JsNumber(_)))
           }

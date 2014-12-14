@@ -18,7 +18,7 @@ object ExampleBetfairServiceNG extends App {
     import system.dispatcher
     val conf = ConfigFactory.load()
     val appKey = conf.getString("betfairService.appKey")
-    val username  = conf.getString("betfairService.username")
+    val username = conf.getString("betfairService.username")
     val password = conf.getString("betfairService.password")
 
     val config = new Configuration(appKey, username, password)
@@ -61,15 +61,15 @@ object ExampleBetfairServiceNG extends App {
     }
 
     // list all horse racing markets in the next 24 hour period
-    val marketStartTime = new TimeRange(DateTime.now(),DateTime.now().plusDays(1))
+    val marketStartTime = new TimeRange(DateTime.now(), DateTime.now().plusDays(1))
     val listMarketCatalogueMarketFilter = new MarketFilter(eventTypeIds = Set(7), marketStartTime = marketStartTime)
     betfairServiceNG.listMarketCatalogue(listMarketCatalogueMarketFilter,
       List(MarketProjection.MARKET_START_TIME,
-      //MarketProjection.RUNNER_METADATA, // TODO need to get a json reader working for runner metadata
-      MarketProjection.RUNNER_DESCRIPTION,
-      MarketProjection.EVENT_TYPE,
-      MarketProjection.EVENT,
-      MarketProjection.COMPETITION), MarketSort.FIRST_TO_START, 200
+        //MarketProjection.RUNNER_METADATA, // TODO need to get a json reader working for runner metadata
+        MarketProjection.RUNNER_DESCRIPTION,
+        MarketProjection.EVENT_TYPE,
+        MarketProjection.EVENT,
+        MarketProjection.COMPETITION), MarketSort.FIRST_TO_START, 200
     ) onComplete {
       case Success(Some(listMarketCatalogueContainer)) =>
         for (marketCatalogue <- listMarketCatalogueContainer.result) {
@@ -100,6 +100,17 @@ object ExampleBetfairServiceNG extends App {
         println("error", error)
     }
 
+    // place a bet
+    val placeInstructions = Set(PlaceInstruction(orderType = OrderType.LIMIT, selectionId = 56343,
+      handicap = 0.0, side = Side.BACK,
+      limitOrder = Some(LimitOrder(size = 2.0, price = 3.5, persistenceType = PersistenceType.PERSIST))))
+    betfairServiceNG.placeOrders(marketId = "1.116586576", instructions = placeInstructions
+    ) onComplete {
+      case Success(Some(placeExecutionReportContainer)) =>
+        println("Place Execution Report is: " + placeExecutionReportContainer)
+      case Failure(error) =>
+        println("error", error)
+    }
   }
 
 }

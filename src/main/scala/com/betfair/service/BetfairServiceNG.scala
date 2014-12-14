@@ -78,6 +78,16 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     command.makeAPIRequest[ListMarketBookContainer](request)
   }
 
+  def placeOrders(marketId: String, instructions: Set[PlaceInstruction]): Future[Option[PlaceExecutionReportContainer]] = {
+
+    import spray.httpx.PlayJsonSupport._
+
+    val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
+
+    val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/placeOrders", params = params)
+    command.makeAPIRequest[PlaceExecutionReportContainer](request)
+  }
+
   def getExchangeFavourite(marketId: String): Future[Option[Runner]] = Future {
 
     def shortestPrice(runners: Set[Runner]): Runner = {

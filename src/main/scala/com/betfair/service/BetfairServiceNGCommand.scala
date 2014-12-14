@@ -20,7 +20,10 @@ final class BetfairServiceNGCommand(val config: Configuration)
   private def checkStatusCodeAndUnmarshal[T](implicit unmarshaller: FromResponseUnmarshaller[T]): Future[HttpResponse] => Future[Option[T]] =
     (futRes: Future[HttpResponse]) => futRes.map {
       res =>
-        if (res.status == StatusCodes.OK) Some(unmarshal[T](unmarshaller)(res)) else None
+        if (res.status == StatusCodes.OK) {
+          println(res)
+          Some(unmarshal[T](unmarshaller)(res))
+        } else None
     }
 
   def makeLoginRequest(request: LoginRequest)(implicit unmarshaller: FromResponseUnmarshaller[LoginResponse]) {
