@@ -1,6 +1,7 @@
 package com.betfair.domain
 
 import play.api.libs.json._
+import scala.language.implicitConversions
 
 object EnumUtils {
 

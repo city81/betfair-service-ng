@@ -4,7 +4,7 @@ organization := "betfair"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.11.2"
 
 scalacOptions := Seq(
   "-deprecation",
@@ -28,23 +28,23 @@ packageOptions in (Compile, packageBin) +=
   Package.ManifestAttributes( java.util.jar.Attributes.Name.MAIN_CLASS -> "com.betfair.service.Boot" )
 
 libraryDependencies ++= {
-  val akkaV = "2.3.3"
-  val sprayV = "1.3.1"
+  val akkaV = "2.3.6"
+  val sprayV = "1.3.2"
   Seq(
     "com.github.tomakehurst" % "wiremock" % "1.46" % "test",
-    "io.spray" % "spray-can" % sprayV,
-    "io.spray" % "spray-caching" % sprayV,
+    "io.spray" % "spray-can_2.11" % sprayV,
+    "io.spray" % "spray-caching_2.11" % sprayV,
     "com.typesafe.akka" %% "akka-slf4j" % akkaV,
-    "io.spray" % "spray-client" % sprayV,
-    "io.spray" % "spray-routing" % sprayV,
-    "io.spray" % "spray-testkit" % sprayV,
-    "io.spray" %% "spray-json" % "1.2.5",
+    "io.spray" % "spray-client_2.11" % sprayV,
+    "io.spray" % "spray-routing_2.11" % sprayV,
+    "io.spray" % "spray-testkit_2.11" % sprayV,
+    "io.spray" %% "spray-json" % "1.3.1",
     "com.typesafe.akka" %% "akka-actor" % akkaV,
     "ch.qos.logback" % "logback-classic" % "1.1.0",
     "org.scalatest" % "scalatest_2.10" % "2.0" % "test",
     "org.mockito" % "mockito-all" % "1.9.5" % "test",
-    "com.github.nscala-time" %% "nscala-time" % "0.8.0",
-    "com.typesafe.play" %% "play-json" % "2.3.7",
+    "com.github.nscala-time" %% "nscala-time" % "1.4.0",
+    "com.typesafe.play" %% "play-json" % "2.4.0-M1",
     "org.apache.httpcomponents" % "httpclient" % "4.3.6"
   )
 }

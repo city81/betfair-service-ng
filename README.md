@@ -5,9 +5,9 @@ This is a project which uses [Scala][scala], [Spray][spray] and the [Play][play]
 
 To use the service, you'll need a Betfair username and password, and an AppKey. These need to be placed in a file called betfair-service-ng.conf which is referenced by the application.conf file. Example configuration is below:
 
-betfairService.appKey = "appkey"
-betfairService.username = "username"
-betfairService.password = "password"
+    betfairService.appKey = "appkey"
+    betfairService.username = "username"
+    betfairService.password = "password"
 
 Before any of the Betting API calls can be made a session token needs to be obtained and this can be done via the loginRequest method. This will cache the session token for future calls.
 
@@ -21,6 +21,7 @@ The ExampleBetfairServiceNG file contains the below sample calls:
     list a market book with exchange best offers
     get a market book exchange favourite
     place a bet
+    cancel a bet
 
 
 LICENCE

@@ -36,7 +36,7 @@ object ExampleBetfairServiceNG extends App {
           println("Event Type is: " + eventTypeResult)
         }
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
     }
 
     // list competitions
@@ -46,7 +46,7 @@ object ExampleBetfairServiceNG extends App {
           println("Competition is: " + competitionResult)
         }
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
     }
 
     // list football competitions
@@ -57,7 +57,7 @@ object ExampleBetfairServiceNG extends App {
           println("Football Competition is: " + competitionResult)
         }
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
     }
 
     // list all horse racing markets in the next 24 hour period
@@ -76,28 +76,28 @@ object ExampleBetfairServiceNG extends App {
           println("Market Catalogue is: " + marketCatalogue)
         }
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
     }
 
     // list market book with Exchange Best Offers
     val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
-    betfairServiceNG.listMarketBook(marketIds = Set("1.116715234"), priceProjection = Some(("priceProjection", priceProjection))
+    betfairServiceNG.listMarketBook(marketIds = Set("1.116666615"), priceProjection = Some(("priceProjection", priceProjection))
     ) onComplete {
       case Success(Some(listMarketBookContainer)) =>
         for (marketBook <- listMarketBookContainer.result) {
           println("Market Book is: " + marketBook)
         }
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
     }
 
     // get exchange favourite
-    betfairServiceNG.getExchangeFavourite(marketId = "1.116715234"
+    betfairServiceNG.getExchangeFavourite(marketId = "1.116666615"
     ) onComplete {
       case Success(Some(runner)) =>
         println("Runner is: " + runner)
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
     }
 
     // place a bet
@@ -109,7 +109,17 @@ object ExampleBetfairServiceNG extends App {
       case Success(Some(placeExecutionReportContainer)) =>
         println("Place Execution Report is: " + placeExecutionReportContainer)
       case Failure(error) =>
-        println("error", error)
+        println("error " + error)
+    }
+
+    // cancel a bet
+    val cancelInstructions = Set(CancelInstruction(betId = "44533201723", sizeReduction = None))
+    betfairServiceNG.cancelOrders(marketId = "1.116666615", instructions = cancelInstructions
+    ) onComplete {
+      case Success(Some(placeExecutionReportContainer)) =>
+        println("Cancel Execution Report is: " + placeExecutionReportContainer)
+      case Failure(error) =>
+        println("error " + error)
     }
   }
 

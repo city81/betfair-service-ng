@@ -10,7 +10,7 @@ import com.betfair.domain._
 import scala.collection.mutable.HashMap
 import scala.concurrent._
 import scala.concurrent.duration._
-
+import scala.language.postfixOps
 
 final class BetfairServiceNG(val config: Configuration, command: BetfairServiceNGCommand)
                             (implicit executionContext: ExecutionContext, system: ActorSystem) {
@@ -88,6 +88,16 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     command.makeAPIRequest[PlaceExecutionReportContainer](request)
   }
 
+  def cancelOrders(marketId: String, instructions: Set[CancelInstruction]): Future[Option[CancelExecutionReportContainer]] = {
+
+    import spray.httpx.PlayJsonSupport._
+
+    val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
+
+    val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/cancelOrders", params = params)
+    command.makeAPIRequest[CancelExecutionReportContainer](request)
+  }
+
   def getExchangeFavourite(marketId: String): Future[Option[Runner]] = Future {
 
     def shortestPrice(runners: Set[Runner]): Runner = {
@@ -102,7 +112,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
         case Some(listMarketBookContainer) =>
           Some(shortestPrice(listMarketBookContainer.result(0).runners))
         case error =>
-          println("error", error)
+          println("error " + error)
           None
       }
     }

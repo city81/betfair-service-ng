@@ -9,7 +9,7 @@ import spray.httpx.unmarshalling.FromResponseUnmarshaller
 
 import scala.concurrent._
 import scala.concurrent.duration._
-
+import scala.language.postfixOps
 
 final class BetfairServiceNGCommand(val config: Configuration)
                                    (implicit executionContext: ExecutionContext, system: ActorSystem) {

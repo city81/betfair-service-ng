@@ -1,7 +1,10 @@
 package com.betfair.domain
 
-import scala.collection.mutable.Map
+import com.betfair.domain.MarketProjection._
 
+import scala.collection.mutable.Map
+import reflect.runtime.universe.TypeTag
+import scala.reflect.runtime.universe._
 
 case class JsonrpcRequest(jsonrpc: String = "2.0", method: String, id: String, params: Map[String, Object])
 
@@ -28,18 +31,18 @@ object JsonrpcRequest {
             case _: MarketSort => s -> Json.toJson(a.asInstanceOf[MarketSort])
             case _: PriceProjection => s -> Json.toJson(a.asInstanceOf[PriceProjection])
             case None => s -> JsNull
-            case JsArray(elements) => s -> JsArray(elements)
-            case _: List[MarketProjection] => s -> Json.toJson(a.asInstanceOf[List[MarketProjection]])
-            case _: Set[PlaceInstruction] if s == "instructions" => s -> Json.toJson(a.asInstanceOf[Set[PlaceInstruction]])
-            case _: Set[String] => s -> Json.toJson(a.asInstanceOf[Set[String]])
-            case _ => s -> JsArray(a.asInstanceOf[List[Int]].map(JsNumber(_)))
+            // need to get this working with typeTag or classTag
+            case market: List[MarketProjection] if market(0).isInstanceOf[MarketProjection] => s -> Json.toJson(a.asInstanceOf[List[MarketProjection]])
+            case place: Set[PlaceInstruction] if place.toList(0).isInstanceOf[PlaceInstruction] => s -> Json.toJson(a.asInstanceOf[Set[PlaceInstruction]])
+            case cancel: Set[CancelInstruction] if cancel.toList(0).isInstanceOf[CancelInstruction] => s -> Json.toJson(a.asInstanceOf[Set[CancelInstruction]])
+            case string: Set[String] if string.toList(0).isInstanceOf[String] => s -> Json.toJson(a.asInstanceOf[Set[String]])
           }
           ret
         }
       }.toSeq: _*)
     }
+
   }
 
   implicit val writesJsonrpcRequest = Json.writes[JsonrpcRequest]
 }
-
