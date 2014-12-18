@@ -3,7 +3,7 @@ package com.betfair.domain
 import org.joda.time.DateTime
 import play.api.libs.json._
 
-case class TimeRange(from: DateTime, to: DateTime)
+case class TimeRange(from: Option[DateTime] = None, to: Option[DateTime] = None)
 
 object TimeRange {
 

@@ -5,20 +5,20 @@ import com.betfair.domain.OrderStatus.OrderStatus
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 
-case class MarketFilter(textQuery: String = null,
+case class MarketFilter(textQuery: Option[String] = None,
                         exchangeIds: Set[Int] = Set.empty,
                         eventTypeIds: Set[Int] = Set.empty,
                         marketIds: Set[Int] = Set.empty,
-                        inPlayOnly: Boolean = false,
+                        inPlayOnly: Option[Boolean] = None,
                         eventIds: Set[Int] = Set.empty,
                         competitionIds: Set[Int] = Set.empty,
                         venues: Set[String] = Set.empty,
-                        bspOnly: Boolean = false,
-                        turnInPlayEnabled: Boolean = false,
+                        bspOnly: Option[Boolean] = None,
+                        turnInPlayEnabled: Option[Boolean] = None,
                         marketBettingTypes: Set[MarketBettingType] = Set.empty,
                         marketCountries: Set[String] = Set.empty,
                         marketTypeCodes: Set[String] = Set.empty,
-                        marketStartTime: TimeRange = null,
+                        marketStartTime: Option[TimeRange] = None,
                         withOrders: Set[OrderStatus] = Set.empty)
 
 

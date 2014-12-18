@@ -5,11 +5,11 @@ import play.api.libs.json.{Reads, Json}
 
 case class MarketCatalogue(marketId: String,
                            marketName: String,
-                           marketStartTime: DateTime,
+                           marketStartTime: Option[DateTime],
                            description: Option[MarketDescription] = None,
                            totalMatched: Double,
-                           runners: List[RunnerCatalog],
-                           eventType: EventType,
+                           runners: Option[List[RunnerCatalog]],
+                           eventType: Option[EventType],
                            competition: Option[Competition] = None,
                            event: Event)
 

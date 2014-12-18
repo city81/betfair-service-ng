@@ -18,6 +18,7 @@ The ExampleBetfairServiceNG file contains the below sample calls:
     list competitions
     list football competitions
     list all horse racing markets in the next 24 hour period
+    get the next UK Win horse racing market
     list a market book with exchange best offers
     get a market book exchange favourite
     place a bet

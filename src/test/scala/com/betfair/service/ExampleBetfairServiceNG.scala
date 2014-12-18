@@ -61,8 +61,9 @@ object ExampleBetfairServiceNG extends App {
     }
 
     // list all horse racing markets in the next 24 hour period
-    val marketStartTime = new TimeRange(DateTime.now(), DateTime.now().plusDays(1))
-    val listMarketCatalogueMarketFilter = new MarketFilter(eventTypeIds = Set(7), marketStartTime = marketStartTime)
+    val marketStartTime = new TimeRange(Some(DateTime.now()), Some(DateTime.now().plusDays(1)))
+    val listMarketCatalogueMarketFilter = new MarketFilter(eventTypeIds = Set(7),
+      marketStartTime = Some(marketStartTime))
     betfairServiceNG.listMarketCatalogue(listMarketCatalogueMarketFilter,
       List(MarketProjection.MARKET_START_TIME,
         //MarketProjection.RUNNER_METADATA, // TODO need to get a json reader working for runner metadata
@@ -74,6 +75,25 @@ object ExampleBetfairServiceNG extends App {
       case Success(Some(listMarketCatalogueContainer)) =>
         for (marketCatalogue <- listMarketCatalogueContainer.result) {
           println("Market Catalogue is: " + marketCatalogue)
+        }
+      case Failure(error) =>
+        println("error " + error)
+    }
+
+    // get the next UK Win horse racing market
+    val nextUKMarketStartTime = new TimeRange(from = Some(DateTime.now()))
+    val nextUKWinHorseRacingMarketFilter = new MarketFilter(eventTypeIds = Set(7),
+      marketStartTime = Some(nextUKMarketStartTime),
+      marketBettingTypes = Set(MarketBettingType.ODDS),
+      marketCountries = Set("GB"),
+      marketTypeCodes = Set("WIN")
+      )
+    betfairServiceNG.listMarketCatalogue(nextUKWinHorseRacingMarketFilter,
+      List(MarketProjection.EVENT), MarketSort.FIRST_TO_START, 50
+    ) onComplete {
+      case Success(Some(listMarketCatalogueContainer)) =>
+        for (marketCatalogue <- listMarketCatalogueContainer.result) {
+          println("Next UK Win Horse Racing Market Catalogue is: " + marketCatalogue)
         }
       case Failure(error) =>
         println("error " + error)
