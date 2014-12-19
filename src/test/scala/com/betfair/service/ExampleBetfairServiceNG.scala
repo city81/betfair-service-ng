@@ -120,6 +120,15 @@ object ExampleBetfairServiceNG extends App {
         println("error " + error)
     }
 
+    // get price bound runners
+    betfairServiceNG.getPriceBoundRunners(marketId = "1.116750507", lowerPrice = 2.0, higherPrice = 4.0
+    ) onComplete {
+      case Success(Some(runners)) =>
+        println("Runners are: " + runners)
+      case Failure(error) =>
+        println("error " + error)
+    }
+
     // place a bet
     val placeInstructions = Set(PlaceInstruction(orderType = OrderType.LIMIT, selectionId = 56343,
       handicap = 0.0, side = Side.BACK,
