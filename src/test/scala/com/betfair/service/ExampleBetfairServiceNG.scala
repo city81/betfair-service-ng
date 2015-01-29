@@ -5,6 +5,7 @@ import com.betfair.Configuration
 import com.betfair.domain._
 import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
+import scala.concurrent.duration._
 import scala.collection.immutable.{HashSet, HashMap}
 import scala.concurrent._
 import scala.util.{Failure, Success}
@@ -27,10 +28,15 @@ object ExampleBetfairServiceNG extends App {
     val betfairServiceNG = new BetfairServiceNG(config, command)
 
     // log in to obtain a session id
-    betfairServiceNG.login
+    val sessionTokenFuture = betfairServiceNG.login map {
+      case Some(loginResponse) => loginResponse.token
+      case _ => throw new BetfairServiceNGException("no session token")
+    }
+
+    val sessionToken = Await.result(sessionTokenFuture, 10 seconds)
 
     // list event types
-    betfairServiceNG.listEventTypes(new MarketFilter()) onComplete {
+    betfairServiceNG.listEventTypes(sessionToken, new MarketFilter()) onComplete {
       case Success(Some(eventTypeResultContainer)) =>
         for (eventTypeResult <- eventTypeResultContainer.result) {
           println("Event Type is: " + eventTypeResult)
@@ -40,7 +46,7 @@ object ExampleBetfairServiceNG extends App {
     }
 
     // list competitions
-    betfairServiceNG.listCompetitions(new MarketFilter()) onComplete {
+    betfairServiceNG.listCompetitions(sessionToken, new MarketFilter()) onComplete {
       case Success(Some(competitionResultContainer)) =>
         for (competitionResult <- competitionResultContainer.result) {
           println("Competition is: " + competitionResult)
@@ -51,7 +57,7 @@ object ExampleBetfairServiceNG extends App {
 
     // list football competitions
     val listCompetitionsMarketFilter = new MarketFilter(eventTypeIds = Set(1))
-    betfairServiceNG.listCompetitions(listCompetitionsMarketFilter) onComplete {
+    betfairServiceNG.listCompetitions(sessionToken, listCompetitionsMarketFilter) onComplete {
       case Success(Some(competitionResultContainer)) =>
         for (competitionResult <- competitionResultContainer.result) {
           println("Football Competition is: " + competitionResult)
@@ -64,7 +70,7 @@ object ExampleBetfairServiceNG extends App {
     val marketStartTime = new TimeRange(Some(DateTime.now()), Some(DateTime.now().plusDays(1)))
     val listMarketCatalogueMarketFilter = new MarketFilter(eventTypeIds = Set(7),
       marketStartTime = Some(marketStartTime))
-    betfairServiceNG.listMarketCatalogue(listMarketCatalogueMarketFilter,
+    betfairServiceNG.listMarketCatalogue(sessionToken, listMarketCatalogueMarketFilter,
       List(MarketProjection.MARKET_START_TIME,
         //MarketProjection.RUNNER_METADATA, // TODO need to get a json reader working for runner metadata
         MarketProjection.RUNNER_DESCRIPTION,
@@ -88,7 +94,7 @@ object ExampleBetfairServiceNG extends App {
       marketCountries = Set("GB"),
       marketTypeCodes = Set("WIN")
       )
-    betfairServiceNG.listMarketCatalogue(nextUKWinHorseRacingMarketFilter,
+    betfairServiceNG.listMarketCatalogue(sessionToken, nextUKWinHorseRacingMarketFilter,
       List(MarketProjection.EVENT), MarketSort.FIRST_TO_START, 50
     ) onComplete {
       case Success(Some(listMarketCatalogueContainer)) =>
@@ -101,7 +107,8 @@ object ExampleBetfairServiceNG extends App {
 
     // list market book with Exchange Best Offers
     val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
-    betfairServiceNG.listMarketBook(marketIds = Set("1.116666615"), priceProjection = Some(("priceProjection", priceProjection))
+    betfairServiceNG.listMarketBook(sessionToken, marketIds = Set("1.116666615"),
+      priceProjection = Some(("priceProjection", priceProjection))
     ) onComplete {
       case Success(Some(listMarketBookContainer)) =>
         for (marketBook <- listMarketBookContainer.result) {
@@ -112,7 +119,7 @@ object ExampleBetfairServiceNG extends App {
     }
 
     // get exchange favourite
-    betfairServiceNG.getExchangeFavourite(marketId = "1.116666615"
+    betfairServiceNG.getExchangeFavourite(sessionToken, marketId = "1.116666615"
     ) onComplete {
       case Success(Some(runner)) =>
         println("Runner is: " + runner)
@@ -121,7 +128,7 @@ object ExampleBetfairServiceNG extends App {
     }
 
     // get price bound runners
-    betfairServiceNG.getPriceBoundRunners(marketId = "1.116750507", lowerPrice = 2.0, higherPrice = 4.0
+    betfairServiceNG.getPriceBoundRunners(sessionToken, marketId = "1.116750507", lowerPrice = 2.0, higherPrice = 4.0
     ) onComplete {
       case Success(Some(runners)) =>
         println("Runners are: " + runners)
@@ -133,7 +140,7 @@ object ExampleBetfairServiceNG extends App {
     val placeInstructions = Set(PlaceInstruction(orderType = OrderType.LIMIT, selectionId = 56343,
       handicap = 0.0, side = Side.BACK,
       limitOrder = Some(LimitOrder(size = 2.0, price = 3.5, persistenceType = PersistenceType.PERSIST))))
-    betfairServiceNG.placeOrders(marketId = "1.116586576", instructions = placeInstructions
+    betfairServiceNG.placeOrders(sessionToken, marketId = "1.116586576", instructions = placeInstructions
     ) onComplete {
       case Success(Some(placeExecutionReportContainer)) =>
         println("Place Execution Report is: " + placeExecutionReportContainer)
@@ -143,13 +150,14 @@ object ExampleBetfairServiceNG extends App {
 
     // cancel a bet
     val cancelInstructions = Set(CancelInstruction(betId = "44533201723", sizeReduction = None))
-    betfairServiceNG.cancelOrders(marketId = "1.116666615", instructions = cancelInstructions
+    betfairServiceNG.cancelOrders(sessionToken, marketId = "1.116666615", instructions = cancelInstructions
     ) onComplete {
       case Success(Some(placeExecutionReportContainer)) =>
         println("Cancel Execution Report is: " + placeExecutionReportContainer)
       case Failure(error) =>
         println("error " + error)
     }
+
   }
 
 }
