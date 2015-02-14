@@ -17,7 +17,7 @@ case class MarketDescription(persistenceEnabled: Boolean,
                         wallet: String,
                         rules: String,
                         rulesHasDate: Boolean,
-                        clarifications: String)
+                        clarifications: Option[String] = None)
 
 object MarketDescription {
   implicit val readsMarketDescription = Json.format[MarketDescription]
