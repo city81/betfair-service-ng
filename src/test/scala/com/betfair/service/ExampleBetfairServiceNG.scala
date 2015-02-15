@@ -6,14 +6,13 @@ import com.betfair.domain._
 import com.typesafe.config.ConfigFactory
 import org.joda.time.DateTime
 import scala.concurrent.duration._
-import scala.collection.immutable.{HashSet, HashMap}
 import scala.concurrent._
 import scala.util.{Failure, Success}
+import org.scalatest.Ignore
+import scala.language.postfixOps
 
-
+@Ignore
 object ExampleBetfairServiceNG extends App {
-
-  override def main(args: Array[String]) {
 
     implicit val system = ActorSystem()
     import system.dispatcher
@@ -41,6 +40,8 @@ object ExampleBetfairServiceNG extends App {
         for (eventTypeResult <- eventTypeResultContainer.result) {
           println("Event Type is: " + eventTypeResult)
         }
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -51,6 +52,8 @@ object ExampleBetfairServiceNG extends App {
         for (competitionResult <- competitionResultContainer.result) {
           println("Competition is: " + competitionResult)
         }
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -62,6 +65,8 @@ object ExampleBetfairServiceNG extends App {
         for (competitionResult <- competitionResultContainer.result) {
           println("Football Competition is: " + competitionResult)
         }
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -82,6 +87,8 @@ object ExampleBetfairServiceNG extends App {
         for (marketCatalogue <- listMarketCatalogueContainer.result) {
           println("Market Catalogue is: " + marketCatalogue)
         }
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -101,6 +108,8 @@ object ExampleBetfairServiceNG extends App {
         for (marketCatalogue <- listMarketCatalogueContainer.result) {
           println("Next UK Win Horse Racing Market Catalogue is: " + marketCatalogue)
         }
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -114,6 +123,8 @@ object ExampleBetfairServiceNG extends App {
         for (marketBook <- listMarketBookContainer.result) {
           println("Market Book is: " + marketBook)
         }
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -123,6 +134,8 @@ object ExampleBetfairServiceNG extends App {
     ) onComplete {
       case Success(Some(runner)) =>
         println("Runner is: " + runner)
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -132,6 +145,8 @@ object ExampleBetfairServiceNG extends App {
     ) onComplete {
       case Success(Some(runners)) =>
         println("Runners are: " + runners)
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -144,6 +159,8 @@ object ExampleBetfairServiceNG extends App {
     ) onComplete {
       case Success(Some(placeExecutionReportContainer)) =>
         println("Place Execution Report is: " + placeExecutionReportContainer)
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
@@ -154,10 +171,10 @@ object ExampleBetfairServiceNG extends App {
     ) onComplete {
       case Success(Some(placeExecutionReportContainer)) =>
         println("Cancel Execution Report is: " + placeExecutionReportContainer)
+      case Success(None) =>
+        println("error no result returned")
       case Failure(error) =>
         println("error " + error)
     }
-
-  }
 
 }

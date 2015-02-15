@@ -12,8 +12,8 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-final class BetfairServiceNGCommand(val config: Configuration)
-                                   (implicit executionContext: ExecutionContext, system: ActorSystem) {
+class BetfairServiceNGCommand(val config: Configuration)
+                             (implicit executionContext: ExecutionContext, system: ActorSystem) {
 
   private def checkStatusCodeAndUnmarshal[T](implicit unmarshaller: FromResponseUnmarshaller[T]): Future[HttpResponse] => Future[Option[T]] =
     (futRes: Future[HttpResponse]) => futRes.map {
@@ -39,7 +39,6 @@ final class BetfairServiceNGCommand(val config: Configuration)
 
   }
 
-
   def makeLogoutRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[LogoutResponse]) {
 
     val pipeline =
@@ -60,7 +59,7 @@ final class BetfairServiceNGCommand(val config: Configuration)
 
     import spray.httpx.PlayJsonSupport._
 
-    println(JsonrpcRequest.writesJsonrpcRequest.writes(request))
+//    println(JsonrpcRequest.writesJsonrpcRequest.writes(request))
 
     val pipeline =
       addHeader("Content-Type", "application/json") ~>

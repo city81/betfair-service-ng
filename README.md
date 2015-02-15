@@ -1,6 +1,8 @@
 Betfair Service NG
 ====================
 
+[![Master Build](https://travis-ci.org/city81/betfair-service-ng.svg?branch=master)](https://travis-ci.org/city81/betfair-service-ng)
+
 This is a project which uses [Scala][scala], [Spray][spray] and the [Play][play] JSON lib to make calls to [Betfair's][betfair] New Generation API ie JSON-RPC
 
 To use the service, you'll need a Betfair username and password, and an AppKey. These need to be placed in a file called betfair-service-ng.conf which is referenced by the application.conf file. Example configuration is below:
