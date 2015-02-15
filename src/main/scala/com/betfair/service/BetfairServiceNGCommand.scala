@@ -5,6 +5,7 @@ import com.betfair.Configuration
 import com.betfair.domain._
 import spray.client.pipelining._
 import spray.http.{HttpResponse, StatusCodes}
+import spray.httpx.encoding.{Deflate, Gzip}
 import spray.httpx.unmarshalling.FromResponseUnmarshaller
 
 import scala.concurrent._
@@ -67,7 +68,9 @@ final class BetfairServiceNGCommand(val config: Configuration)
         addHeader("Accept-Charset", "UTF-8") ~>
         addHeader("X-Application", config.appKey) ~>
         addHeader("X-Authentication", sessionToken) ~>
-        sendReceive ~> checkStatusCodeAndUnmarshal[T]
+        sendReceive ~>
+        decode(Gzip) ~> decode(Deflate) ~>
+        checkStatusCodeAndUnmarshal[T]
 
     pipeline {
       Post("https://api.betfair.com/exchange/betting/json-rpc/v1", request)
