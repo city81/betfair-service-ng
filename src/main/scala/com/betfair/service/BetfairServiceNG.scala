@@ -42,6 +42,15 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     command.makeAPIRequest[EventTypeResultContainer](sessionToken, request)
   }
 
+  def listEvents(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventResultContainer]] = {
+
+    import spray.httpx.PlayJsonSupport._
+
+    val params = HashMap[String, Object]("filter" -> marketFilter)
+    val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
+    command.makeAPIRequest[EventResultContainer](sessionToken, request)
+  }
+
   def listCompetitions(sessionToken: String, marketFilter: MarketFilter): Future[Option[CompetitionResultContainer]] = {
 
     import spray.httpx.PlayJsonSupport._
