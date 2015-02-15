@@ -5,7 +5,7 @@ import play.api.libs.json._
 
 case class Event(id: String,
             name: String,
-            countryCode: String,
+            countryCode: Option[String] = None,
             timezone: String,
             venue: Option[String] = None,
             openDate: DateTime)
