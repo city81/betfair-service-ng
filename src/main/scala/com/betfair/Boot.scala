@@ -16,8 +16,10 @@ object Boot extends App {
   val appKey = conf.getString("betfairService.appKey")
   val username  = conf.getString("betfairService.username")
   val password = conf.getString("betfairService.password")
+  val apiUrl = conf.getString("betfairService.apiUrl")
+  val isoUrl = conf.getString("betfairService.isoUrl")
 
-  val configuration = Configuration(appKey, username, password)
+  val configuration = Configuration(appKey, username, password, apiUrl, isoUrl)
 
   // we need an ActorSystem to host our application in
   implicit val system = ActorSystem("on-spray-can")

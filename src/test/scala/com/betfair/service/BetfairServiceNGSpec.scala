@@ -21,7 +21,9 @@ class BetfairServiceNGSpec extends FlatSpec with ShouldMatchers with MockFactory
   val testConfig = Configuration(
     appKey = "testAppKey",
     username = "testUsername",
-    password = "testPassword"
+    password = "testPassword",
+    apiUrl = "localhost",
+    isoUrl = "localhost"
   )
   class MockCommand extends BetfairServiceNGCommand(testConfig)
 
@@ -51,7 +53,6 @@ class BetfairServiceNGSpec extends FlatSpec with ShouldMatchers with MockFactory
           container.result.size should be(1)
           container.result(0).marketCount should be(1)
           container.result(0).eventType.id should be(eventTypeId)
-
         case _ =>
           fail()
       }

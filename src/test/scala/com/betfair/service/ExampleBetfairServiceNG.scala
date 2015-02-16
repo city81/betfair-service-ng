@@ -20,8 +20,10 @@ object ExampleBetfairServiceNG extends App {
     val appKey = conf.getString("betfairService.appKey")
     val username = conf.getString("betfairService.username")
     val password = conf.getString("betfairService.password")
+    val apiUrl = conf.getString("betfairService.apiUrl")
+    val isoUrl = conf.getString("betfairService.isoUrl")
 
-    val config = new Configuration(appKey, username, password)
+    val config = new Configuration(appKey, username, password, apiUrl, isoUrl)
     val command = new BetfairServiceNGCommand(config)
 
     val betfairServiceNG = new BetfairServiceNG(config, command)

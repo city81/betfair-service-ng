@@ -34,7 +34,7 @@ class BetfairServiceNGCommand(val config: Configuration)
         sendReceive ~> checkStatusCodeAndUnmarshal[LoginResponse]
 
     pipeline {
-      Post("https://identitysso.betfair.com/api/login?username=" + request.username + "&password=" + request.password)
+      Post(config.isoUrl + "/login?username=" + request.username + "&password=" + request.password)
     }
 
   }
@@ -50,7 +50,7 @@ class BetfairServiceNGCommand(val config: Configuration)
         sendReceive ~> checkStatusCodeAndUnmarshal[LogoutResponse]
 
     pipeline {
-      Post("https://identitysso.betfair.com/api/logout")
+      Post(config.isoUrl + "/logout")
     }
 
   }
@@ -72,7 +72,7 @@ class BetfairServiceNGCommand(val config: Configuration)
         checkStatusCodeAndUnmarshal[T]
 
     pipeline {
-      Post("https://api.betfair.com/exchange/betting/json-rpc/v1", request)
+      Post(config.apiUrl, request)
     }
 
   }

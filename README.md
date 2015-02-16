@@ -5,11 +5,13 @@ Betfair Service NG
 
 This is a project which uses [Scala][scala], [Spray][spray] and the [Play][play] JSON lib to make calls to [Betfair's][betfair] New Generation API ie JSON-RPC
 
-To use the service, you'll need a Betfair username and password, and an AppKey. These need to be placed in a file called betfair-service-ng.conf which is referenced by the application.conf file. Example configuration is below:
+To use the service, you'll need a Betfair username and password, and an AppKey. The confgi file also contains the betfair urls. These need to be placed in a file called betfair-service-ng.conf which is referenced by the application.conf file. Example configuration is below:
 
     betfairService.appKey = "appkey"
     betfairService.username = "username"
     betfairService.password = "password"
+    betfairService.apiUrl = "https://api.betfair.com/exchange/betting/json-rpc/v1"
+    betfairService.isoUrl = "https://identitysso.betfair.com/api"
 
 Before any of the Betting API calls can be made a session token needs to be obtained and this can be done via the loginRequest method. This will cache the session token for future calls.
 
