@@ -14,6 +14,11 @@ src_managed/
 project/boot/
 project/plugins/project/
 
+#
+src/main/java/scala/com/betfair/service/BetfairFavourite
+src/main/java/scala/com/betfair/service/RacingRobot
+
+
 # Scala-IDE specific
 *.scala_dependencies
 
