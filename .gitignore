@@ -15,8 +15,8 @@ project/boot/
 project/plugins/project/
 
 #
-src/main/java/scala/com/betfair/service/BetfairFavourite
-src/main/java/scala/com/betfair/service/RacingRobot
+src/main/java/scala/com/betfair/service/BetfairFavourite.scala
+src/main/java/scala/com/betfair/service/RacingRobot.scala
 
 
 # Scala-IDE specific
