@@ -6,8 +6,9 @@ import org.joda.time.DateTime
 import play.api.libs.json.{Reads, Json}
 
 case class PlaceInstructionReport(status: Option[InstructionReportStatus], errorCode: Option[InstructionReportErrorCode],
-                                   instruction: PlaceInstruction, betId: String, placedDate: DateTime,
-                                   averagePriceMatched: Double, sizeMatched: Double)
+                                   instruction: PlaceInstruction, betId: Option[String],
+                                   placedDate: Option[DateTime],
+                                   averagePriceMatched: Option[Double], sizeMatched: Option[Double])
 
 object PlaceInstructionReport {
   val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

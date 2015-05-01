@@ -79,8 +79,6 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
     import spray.httpx.PlayJsonSupport._
 
-    print("listMarketBook")
-
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(priceProjection, orderProjection, matchProjection, currencyCode).flatten
 
@@ -115,9 +113,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
     def shortestPrice(runners: Set[Runner]): Runner = {
       if (runners.isEmpty) throw new NoSuchElementException
-      val runner = runners.reduceLeft((x, y) => if ((y.ex.get.availableToBack.isEmpty) ||
-        x.ex.get.availableToBack.head.price < y.ex.get.availableToBack.head.price) x else y)
-      runner
+      runners.filter(r => r.status == "ACTIVE").reduceLeft((x, y) => if (x.ex.get.availableToBack.head.price < y.ex.get.availableToBack.head.price) x else y)
     }
 
     val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
@@ -139,7 +135,9 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
     def filterRunners(runners: Set[Runner]): Set[Runner] = {
       if (runners.isEmpty) throw new NoSuchElementException
-      runners.filter(x => (x.ex.get.availableToBack.head.price >= lowerPrice && x.ex.get.availableToBack.head.price <= higherPrice))
+      runners.filter(x => (x.status == "ACTIVE" &&
+        x.ex.get.availableToBack.head.price >= lowerPrice &&
+        x.ex.get.availableToBack.head.price <= higherPrice))
     }
 
     val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
