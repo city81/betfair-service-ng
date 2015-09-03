@@ -15,9 +15,11 @@ project/boot/
 project/plugins/project/
 
 #
-src/main/java/scala/com/betfair/service/BetfairFavourite.scala
-src/main/java/scala/com/betfair/service/RacingRobot.scala
-
+src/main/scala/com/betfair/service/BetfairFavourite.scala
+src/main/scala/com/betfair/service/RacingRobot.scala
+src/main/scala/com/betfair/service/TeamEnum.java
+src/main/scala/com/betfair/service/TestPastOddsProcessorE2.scala
+src/main/scala/com/betfair/service/FixtureWithOdds.scala
 
 # Scala-IDE specific
 *.scala_dependencies
