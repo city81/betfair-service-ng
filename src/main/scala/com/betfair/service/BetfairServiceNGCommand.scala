@@ -19,7 +19,7 @@ class BetfairServiceNGCommand(val config: Configuration)
     (futRes: Future[HttpResponse]) => futRes.map {
       res =>
         if (res.status == StatusCodes.OK) {
-          println(res)
+//          println(res) // TODO replace with logging
           Some(unmarshal[T](unmarshaller)(res))
         } else None
     }
@@ -27,7 +27,6 @@ class BetfairServiceNGCommand(val config: Configuration)
   def makeLoginRequest(request: LoginRequest)(implicit unmarshaller: FromResponseUnmarshaller[LoginResponse]): Future[Option[LoginResponse]] = {
 
     val pipeline =
-      addHeader("Content-Type", "application/x-www-form-urlencoded") ~>
         addHeader("Accept", "application/json") ~>
         addHeader("Accept-Charset", "UTF-8") ~>
         addHeader("X-Application", config.appKey) ~>
@@ -42,7 +41,6 @@ class BetfairServiceNGCommand(val config: Configuration)
   def makeLogoutRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[LogoutResponse]) {
 
     val pipeline =
-      addHeader("Content-Type", "application/x-www-form-urlencoded") ~>
         addHeader("Accept", "application/json") ~>
         addHeader("Accept-Charset", "UTF-8") ~>
         addHeader("X-Application", config.appKey) ~>
@@ -60,7 +58,6 @@ class BetfairServiceNGCommand(val config: Configuration)
     import spray.httpx.PlayJsonSupport._
 
     val pipeline =
-      addHeader("Content-Type", "application/json") ~>
         addHeader("Accept", "application/json") ~>
         addHeader("Accept-Charset", "UTF-8") ~>
         addHeader("X-Application", config.appKey) ~>

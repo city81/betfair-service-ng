@@ -93,8 +93,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     val params = HashMap[String, Object]("filter" -> marketFilter, "marketProjection" -> marketProjection,
       "sort" -> sort, "maxResults" -> maxResults)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listMarketCatalogue", params = params)
-    val response = command.makeAPIRequest[ListMarketCatalogueContainer](sessionToken, request)
-    response
+    command.makeAPIRequest[ListMarketCatalogueContainer](sessionToken, request)
   }
 
   def listMarketBook(sessionToken: String, marketIds: Set[String],
@@ -166,7 +165,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
           None
       }
     }
-    Await.result(favourite, 10 seconds)
+    Await.result(favourite, 30 seconds)
   }
 
   def getPriceBoundRunners(sessionToken: String, marketId: String, lowerPrice: Double, higherPrice: Double): Future[Option[Set[Runner]]] = Future {

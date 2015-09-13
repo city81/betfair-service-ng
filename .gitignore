@@ -15,11 +15,8 @@ project/boot/
 project/plugins/project/
 
 #
-src/main/scala/com/betfair/service/BetfairFavourite.scala
-src/main/scala/com/betfair/service/RacingRobot.scala
-src/main/scala/com/betfair/service/TeamEnum.java
-src/main/scala/com/betfair/service/TestPastOddsProcessorE2.scala
-src/main/scala/com/betfair/service/FixtureWithOdds.scala
+src/main/scala/com/betfair/robots/football/*.scala
+src/main/scala/com/betfair/robots/football/TeamEnum.java
 
 # Scala-IDE specific
 *.scala_dependencies
@@ -43,3 +40,4 @@ dist
 *.target
 
 betfair-service-ng.conf
+

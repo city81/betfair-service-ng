@@ -17,7 +17,7 @@ object MarketCatalogue {
 
   import play.api.libs.json._
 
-  val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+  val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
   implicit val dateTimeReads = Reads.jodaDateReads(dateFormat)
 
   implicit val readsMarketCatalogue = Json.reads[MarketCatalogue]
