@@ -36,7 +36,7 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
           MarketProjection.COMPETITION), MarketSort.FIRST_TO_START, 200
       ) onComplete {
         case Success(Some(listMarketCatalogueContainer)) =>
-          for (marketCatalogue <- listMarketCatalogueContainer.result) {
+            for (marketCatalogue <- listMarketCatalogueContainer.result) {
 
             // create the race actor if not already running
             val raceActorName = "exchange-favourite-" + marketCatalogue.marketId
@@ -45,6 +45,8 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
 
               val raceActor = context.actorOf(Props(new MonitorBetfairFavourite(betfairServiceNG, sessionToken,
                 marketCatalogue.marketId, marketCatalogue.marketStartTime)), raceActorName)
+
+              println(marketCatalogue.marketStartTime.get + " " + raceActorName)
 
               // start actor five mins before the off
               val millisecondsBeforeMonitoring =
@@ -57,6 +59,12 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
                 system.actorOf(Props(new MonitorBetfairFavourite(betfairServiceNG, sessionToken,
                   marketCatalogue.marketId, marketCatalogue.marketStartTime)),
                   "exchange-favourite-" + marketCatalogue.marketId), "")
+
+//              system.scheduler.scheduleOnce(
+//                Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
+//                system.actorOf(Props(new MonitorShortPricedRunners(betfairServiceNG, sessionToken,
+//                  marketCatalogue.marketId, marketCatalogue.marketStartTime)),
+//                  "monitor-short-priced-runners-" + marketCatalogue.marketId), "")
             }
           }
         case Success(None) =>

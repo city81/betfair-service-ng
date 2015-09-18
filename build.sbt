@@ -27,6 +27,10 @@ mainClass in (Compile,run) := Some("com.betfair.service.Boot")
 packageOptions in (Compile, packageBin) +=
   Package.ManifestAttributes( java.util.jar.Attributes.Name.MAIN_CLASS -> "com.betfair.service.Boot" )
 
+assemblyExcludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
+  cp filter {x => x.data.getName.matches("specs2_2.11-2.3.13.jar") || x.data.getName.matches("mockito-core-1.9.5.jar")}
+}
+
 libraryDependencies ++= {
   val akkaV = "2.3.6"
   val sprayV = "1.3.2"
@@ -41,12 +45,13 @@ libraryDependencies ++= {
     "io.spray" %% "spray-json" % "1.3.1",
     "com.typesafe.akka" %% "akka-actor" % akkaV,
     "ch.qos.logback" % "logback-classic" % "1.1.0",
-    "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
-    "org.mockito" % "mockito-all" % "1.9.5" % "test",
+    "org.scalatest" % "scalatest_2.11" % "2.2.1" % "provided",
+    "org.mockito" % "mockito-all" % "1.9.5" % "provided",
+    "org.mockito" % "mockito-core" % "1.9.5" % "provided",
     "com.github.nscala-time" %% "nscala-time" % "1.4.0",
     "com.typesafe.play" %% "play-json" % "2.4.0-M1",
     "org.apache.httpcomponents" % "httpclient" % "4.3.6",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "test"
+    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "provided"
   )
 }
 

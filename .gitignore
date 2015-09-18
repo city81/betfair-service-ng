@@ -17,6 +17,7 @@ project/plugins/project/
 #
 src/main/scala/com/betfair/robots/football/*.scala
 src/main/scala/com/betfair/robots/football/TeamEnum.java
+src/main/scala/com/betfair/robots/racing/MonitorShortPricedRunners.scala
 
 # Scala-IDE specific
 *.scala_dependencies

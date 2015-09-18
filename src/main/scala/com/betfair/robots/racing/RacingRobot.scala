@@ -13,7 +13,7 @@ object RacingRobot extends App {
   implicit val system = ActorSystem("racing-robot")
   implicit val executionContext = system.dispatcher
 
-  // load and crrate the config object
+  // load and create the config object
   val conf = ConfigFactory.load()
   val appKey = conf.getString("betfairService.appKey")
   val username = conf.getString("betfairService.username")
@@ -30,5 +30,4 @@ object RacingRobot extends App {
   val racingRobotSupervisor = system.actorOf(Props(new RacingRobotSupervisor(betfairServiceNG)), "racing-robot-supervisor")
 
   racingRobotSupervisor ! Start
-
 }

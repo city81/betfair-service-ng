@@ -4,10 +4,10 @@ import akka.actor.Actor
 import com.betfair.service.BetfairServiceNG
 import org.joda.time
 import org.joda.time.{DateTime, DateTimeZone}
+import scala.concurrent.duration._
 
 import scala.concurrent._
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
 
 class MonitorBetfairFavourite(betfairServiceNG: BetfairServiceNG, sessionToken: String,
                        marketId: String, marketStartTime: Option[DateTime])(implicit executionContext: ExecutionContext) extends Actor {
@@ -20,20 +20,18 @@ class MonitorBetfairFavourite(betfairServiceNG: BetfairServiceNG, sessionToken: 
       while (marketStartTime.get.getMillis > (new time.DateTime(DateTimeZone.UTC)).getMillis) {
 
         // get exchange favourite
-        betfairServiceNG.getExchangeFavourite(sessionToken, marketId = marketId
-        ) onComplete {
-          case Success(Some(runner)) =>
-            println("runner = " + runner.selectionId + " " + runner.lastPriceTraded)
-            println("back prices = " + runner.ex.get.availableToBack)
-            println("lay prices = " + runner.ex.get.availableToLay)
-          case Success(None) =>
-            println("error no result returned")
-          case Failure(error) =>
-            println("error in startReceiving " + error)
+        val exchangeFavourite = betfairServiceNG.getExchangeFavourite(sessionToken, marketId = marketId
+        ) map { response =>
+          response match {
+            case Some(runner) =>
+              println("runner = " + runner.selectionId + " " + runner.lastPriceTraded)
+              println("back prices = " + runner.ex.get.availableToBack)
+              println("lay prices = " + runner.ex.get.availableToLay)
+            case _ =>
+              println("error no result returned")
+          }
         }
-
-        // wait for one sec to overcome throttling
-        Thread.sleep(1000)
+        Await.result(exchangeFavourite, 10 seconds)
 
       }
 
