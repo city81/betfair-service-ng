@@ -168,6 +168,31 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     Await.result(favourite, 30 seconds)
   }
 
+  def getWinner(sessionToken: String, marketId: String): Future[Option[Runner]] = Future {
+
+    def winner(runners: Set[Runner]): Option[Runner] = {
+      if (runners.isEmpty) throw new NoSuchElementException
+      val winningRunnerList = runners.filter(r => r.status == "WINNER")
+      if (winningRunnerList.isEmpty) {
+        None
+      } else {
+        Some(winningRunnerList.head)
+      }
+    }
+
+    val favourite = listMarketBook(sessionToken, marketIds = Set(marketId)
+    ).map { response =>
+      response match {
+        case Some(listMarketBookContainer) =>
+          winner(listMarketBookContainer.result(0).runners)
+        case error =>
+          println("error in getWinner " + error)
+          None
+      }
+    }
+    Await.result(favourite, 30 seconds)
+  }
+
   def getPriceBoundRunners(sessionToken: String, marketId: String, lowerPrice: Double, higherPrice: Double): Future[Option[Set[Runner]]] = Future {
 
     def filterRunners(runners: Set[Runner]): Set[Runner] = {

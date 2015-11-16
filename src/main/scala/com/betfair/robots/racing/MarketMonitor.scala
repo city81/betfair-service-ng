@@ -39,7 +39,7 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
             for (marketCatalogue <- listMarketCatalogueContainer.result) {
 
             // create the race actor if not already running
-            val raceActorName = "exchange-favourite-" + marketCatalogue.marketId
+            val raceActorName = "monitor-short-priced-runners-" + marketCatalogue.marketId
 
             if (child(raceActorName).isEmpty) {
 
@@ -53,18 +53,11 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
                         marketCatalogue.marketStartTime.get.minusMinutes(5).getMillis -
                           (new time.DateTime(DateTimeZone.UTC)).getMillis
 
-              // start an actor to get exchange favourite then get price every second
               system.scheduler.scheduleOnce(
                 Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-                system.actorOf(Props(new MonitorBetfairFavourite(betfairServiceNG, sessionToken,
+                system.actorOf(Props(new MonitorShortPricedRunners(betfairServiceNG, sessionToken,
                   marketCatalogue.marketId, marketCatalogue.marketStartTime)),
-                  "exchange-favourite-" + marketCatalogue.marketId), "")
-
-//              system.scheduler.scheduleOnce(
-//                Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-//                system.actorOf(Props(new MonitorShortPricedRunners(betfairServiceNG, sessionToken,
-//                  marketCatalogue.marketId, marketCatalogue.marketStartTime)),
-//                  "monitor-short-priced-runners-" + marketCatalogue.marketId), "")
+                  raceActorName), "")
             }
           }
         case Success(None) =>

@@ -51,7 +51,8 @@ libraryDependencies ++= {
     "com.github.nscala-time" %% "nscala-time" % "1.4.0",
     "com.typesafe.play" %% "play-json" % "2.4.0-M1",
     "org.apache.httpcomponents" % "httpclient" % "4.3.6",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "provided"
+    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "provided",
+    "org.codehaus.plexus" % "plexus-utils" % "1.5.7"
   )
 }
 
