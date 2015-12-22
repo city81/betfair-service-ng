@@ -3,6 +3,7 @@ package com.betfair.service
 import akka.actor.ActorSystem
 import com.betfair.Configuration
 import com.betfair.domain.{JsonrpcRequest, MarketFilter, EventResultContainer}
+import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 import org.scalatest.concurrent.Eventually.eventually
 import org.scalatest.time.{Second, Span}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -29,7 +30,7 @@ class BetfairServiceNGCommandSpec extends UnitSpec with WireMockFixture {
 
     "add the app key to http header" in {
 
-      import spray.httpx.PlayJsonSupport._
+      import PlayJsonSupport._
 
       val requests = addRequestHeaderListener()
 
@@ -46,7 +47,7 @@ class BetfairServiceNGCommandSpec extends UnitSpec with WireMockFixture {
 
     "add the session token to http header" in {
 
-      import spray.httpx.PlayJsonSupport._
+      import PlayJsonSupport._
 
       val requests = addRequestHeaderListener()
 

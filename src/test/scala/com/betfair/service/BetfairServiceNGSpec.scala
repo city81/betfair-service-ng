@@ -1,16 +1,17 @@
 package com.betfair.service
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.unmarshalling.FromResponseUnmarshaller
 import com.betfair.Configuration
 import com.betfair.domain._
 import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent._
 import org.scalatest.{FlatSpec, ShouldMatchers}
-import spray.httpx.unmarshalling._
 
 import scala.collection.mutable
 import scala.concurrent.Future
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class BetfairServiceNGSpec extends FlatSpec with ShouldMatchers with MockFactory with ScalaFutures {

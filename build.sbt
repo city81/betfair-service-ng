@@ -22,13 +22,13 @@ resolvers ++= Seq(
 // sbt-Revolver allows the running of the spray service in sbt in the background using re-start
 seq(Revolver.settings: _*)
 
-mainClass in (Compile,run) := Some("com.betfair.service.Boot")
+mainClass in(Compile, run) := Some("com.betfair.service.Boot")
 
-packageOptions in (Compile, packageBin) +=
-  Package.ManifestAttributes( java.util.jar.Attributes.Name.MAIN_CLASS -> "com.betfair.service.Boot" )
+packageOptions in(Compile, packageBin) +=
+  Package.ManifestAttributes(java.util.jar.Attributes.Name.MAIN_CLASS -> "com.betfair.service.Boot")
 
 assemblyExcludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
-  cp filter {x => x.data.getName.matches("specs2_2.11-2.3.13.jar") || x.data.getName.matches("mockito-core-1.9.5.jar")}
+  cp filter { x => x.data.getName.matches("specs2_2.11-2.3.13.jar") || x.data.getName.matches("mockito-core-1.9.5.jar") }
 }
 
 libraryDependencies ++= {
@@ -36,13 +36,13 @@ libraryDependencies ++= {
   val sprayV = "1.3.2"
   Seq(
     "com.github.tomakehurst" % "wiremock" % "1.46" % "test",
-    "io.spray" % "spray-can_2.11" % sprayV,
-    "io.spray" % "spray-caching_2.11" % sprayV,
+//        "io.spray" % "spray-can_2.11" % sprayV,
+//        "io.spray" % "spray-caching_2.11" % sprayV,
     "com.typesafe.akka" %% "akka-slf4j" % akkaV,
-    "io.spray" % "spray-client_2.11" % sprayV,
-    "io.spray" % "spray-routing_2.11" % sprayV,
-    "io.spray" % "spray-testkit_2.11" % sprayV,
-    "io.spray" %% "spray-json" % "1.3.1",
+//        "io.spray" % "spray-client_2.11" % sprayV,
+//        "io.spray" % "spray-routing_2.11" % sprayV,
+//        "io.spray" % "spray-testkit_2.11" % sprayV,
+//        "io.spray" %% "spray-json" % "1.3.1",
     "com.typesafe.akka" %% "akka-actor" % akkaV,
     "ch.qos.logback" % "logback-classic" % "1.1.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.1" % "provided",
@@ -52,7 +52,12 @@ libraryDependencies ++= {
     "com.typesafe.play" %% "play-json" % "2.4.0-M1",
     "org.apache.httpcomponents" % "httpclient" % "4.3.6",
     "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "provided",
-    "org.codehaus.plexus" % "plexus-utils" % "1.5.7"
+    "org.codehaus.plexus" % "plexus-utils" % "1.5.7",
+    "com.typesafe.akka" % "akka-stream-experimental_2.11" % "2.0",
+    "com.typesafe.akka" % "akka-http-core-experimental_2.11" % "2.0",
+    "com.typesafe.akka" % "akka-http-experimental_2.11" % "2.0",
+    "com.typesafe.akka" % "akka-http-testkit-experimental_2.11" % "2.0",
+    "de.heikoseeberger" % "akka-http-play-json_2.11" % "1.4.0"
   )
 }
 

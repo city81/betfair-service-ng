@@ -1,74 +1,90 @@
 package com.betfair.service
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.marshalling.Marshal
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers._
+import akka.http.scaladsl.unmarshalling.{FromResponseUnmarshaller, Unmarshal}
+import akka.stream.ActorMaterializer
 import com.betfair.Configuration
 import com.betfair.domain._
-import spray.client.pipelining._
-import spray.http.{HttpResponse, StatusCodes}
-import spray.httpx.encoding.{Deflate, Gzip}
-import spray.httpx.unmarshalling.FromResponseUnmarshaller
+import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 
 import scala.concurrent._
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class BetfairServiceNGCommand(val config: Configuration)
                              (implicit executionContext: ExecutionContext, system: ActorSystem) {
 
-  private def checkStatusCodeAndUnmarshal[T](implicit unmarshaller: FromResponseUnmarshaller[T]): Future[HttpResponse] => Future[Option[T]] =
-    (futRes: Future[HttpResponse]) => futRes.map {
-      res =>
-        if (res.status == StatusCodes.OK) {
-//          println(res) // TODO replace with logging
-          Some(unmarshal[T](unmarshaller)(res))
-        } else None
-    }
-
   def makeLoginRequest(request: LoginRequest)(implicit unmarshaller: FromResponseUnmarshaller[LoginResponse]): Future[Option[LoginResponse]] = {
 
-    val pipeline =
-        addHeader("Accept", "application/json") ~>
-        addHeader("Accept-Charset", "UTF-8") ~>
-        addHeader("X-Application", config.appKey) ~>
-        sendReceive ~> checkStatusCodeAndUnmarshal[LoginResponse]
+    import HttpCharsets._
+    import HttpMethods._
+    import MediaTypes._
+    import PlayJsonSupport._
 
-    pipeline {
-      Post(config.isoUrl + "/login?username=" + request.username + "&password=" + request.password)
-    }
+    implicit val materializer = ActorMaterializer()
+
+    val accept = Accept(`application/json`)
+    val acceptCharset = `Accept-Charset`(`UTF-8`, HttpCharsetRange.`*`)
+    val xApplication = RawHeader("X-Application", config.appKey)
+
+    val headers = Seq(accept, acceptCharset, xApplication)
+
+    for {
+      response <- Http().singleRequest(HttpRequest(
+        POST, uri = config.isoUrl + "/login?username=" + request.username + "&password=" + request.password,
+        headers = headers.toList))
+      entity <- unmarshaller(response)
+    } yield Some(entity)
 
   }
 
   def makeLogoutRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[LogoutResponse]) {
 
-    val pipeline =
-        addHeader("Accept", "application/json") ~>
-        addHeader("Accept-Charset", "UTF-8") ~>
-        addHeader("X-Application", config.appKey) ~>
-        addHeader("X-Authentication", sessionToken) ~>
-        sendReceive ~> checkStatusCodeAndUnmarshal[LogoutResponse]
+    import HttpCharsets._
+    import HttpMethods._
+    import MediaTypes._
 
-    pipeline {
-      Post(config.isoUrl + "/logout")
-    }
+    implicit val materializer = ActorMaterializer()
+
+    val accept = Accept(`application/json`)
+    val acceptCharset = `Accept-Charset`(`UTF-8`, HttpCharsetRange.`*`)
+    val xApplication = RawHeader("X-Application", config.appKey)
+    val xAuthentication = RawHeader("X-Authentication", sessionToken)
+
+    val headers = Seq(accept, acceptCharset, xApplication, xAuthentication)
+
+    Http().singleRequest(HttpRequest(
+      POST,
+      uri = config.isoUrl + "/logout",
+      headers = headers.toList))
 
   }
 
   def makeAPIRequest[T](sessionToken: String, request: JsonrpcRequest)(implicit unmarshaller: FromResponseUnmarshaller[T]): Future[Option[T]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import HttpCharsets._
+    import HttpMethods._
+    import MediaTypes._
+    import PlayJsonSupport._
 
-    val pipeline =
-        addHeader("Accept", "application/json") ~>
-        addHeader("Accept-Charset", "UTF-8") ~>
-        addHeader("X-Application", config.appKey) ~>
-        addHeader("X-Authentication", sessionToken) ~>
-        sendReceive ~>
-        decode(Gzip) ~> decode(Deflate) ~>
-        checkStatusCodeAndUnmarshal[T]
+    implicit val materializer = ActorMaterializer()
 
-    pipeline {
-      Post(config.apiUrl, request)
-    }
+    val accept = Accept(`application/json`)
+    val acceptCharset = `Accept-Charset`(`UTF-8`, HttpCharsetRange.`*`)
+    val xApplication = RawHeader("X-Application", config.appKey)
+    val xAuthentication = RawHeader("X-Authentication", sessionToken)
+
+    val headers = Seq(accept, acceptCharset, xApplication, xAuthentication)
+
+    for {
+      request <- Marshal(request).to[RequestEntity]
+      response <- Http().singleRequest(HttpRequest(
+        POST, uri = config.apiUrl, entity = request, headers = headers.toList))
+      entity <- unmarshaller(response)
+    } yield Some(entity)
 
   }
 

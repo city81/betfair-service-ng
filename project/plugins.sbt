@@ -8,6 +8,8 @@ resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/reposi
 
 resolvers += "Maven 2" at "http://repo2.maven.org/maven2"
 
+resolvers += "bintray" at "http://dl.bintray.com/hseeberger/maven"
+
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.1")
 
 resolvers += "Sonatype Repository" at "https://oss.sonatype.org/content/groups/public"
@@ -19,3 +21,5 @@ addSbtPlugin("io.spray" % "sbt-revolver" % "0.7.1")
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "0.6.4")
 
 addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.4")
+
+addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")

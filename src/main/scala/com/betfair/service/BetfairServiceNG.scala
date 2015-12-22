@@ -1,14 +1,17 @@
 package com.betfair.service
 
 import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import com.betfair.Configuration
 import com.betfair.domain.MarketProjection.MarketProjection
 import com.betfair.domain.MarketSort.MarketSort
-import com.betfair.domain.OrderProjection.OrderProjection
 import com.betfair.domain.MatchProjection.MatchProjection
-import com.betfair.domain.SortDir.SortDir
 import com.betfair.domain.OrderBy.OrderBy
+import com.betfair.domain.OrderProjection.OrderProjection
+import com.betfair.domain.SortDir.SortDir
 import com.betfair.domain._
+import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
+
 import scala.collection.mutable.HashMap
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -21,7 +24,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def login(): Future[Option[LoginResponse]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val request = LoginRequest(config.username, config.password)
     command.makeLoginRequest(request)
@@ -29,7 +32,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def logout(sessionToken: String) {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     command.makeLogoutRequest(sessionToken)
   }
@@ -45,7 +48,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
                         fromRecord: Option[(String, Integer)] = None,
                         recordCount: Option[(String, Integer)] = None): Future[Option[CurrentOrderSummaryReportContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(betIds, marketIds, orderProjection, placedDateRange, dateRange,
@@ -60,7 +63,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def listEventTypes(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventTypeResultContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEventTypes", params = params)
@@ -69,7 +72,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def listEvents(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventResultContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
@@ -78,7 +81,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def listCompetitions(sessionToken: String, marketFilter: MarketFilter): Future[Option[CompetitionResultContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listCompetitions", params = params)
@@ -88,7 +91,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   def listMarketCatalogue(sessionToken: String, marketFilter: MarketFilter, marketProjection: List[MarketProjection],
                           sort: MarketSort, maxResults: Integer): Future[Option[ListMarketCatalogueContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("filter" -> marketFilter, "marketProjection" -> marketProjection,
       "sort" -> sort, "maxResults" -> maxResults)
@@ -102,7 +105,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
                      matchProjection: Option[(String, MatchProjection)] = None,
                      currencyCode: Option[(String, String)] = None): Future[Option[ListMarketBookContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(priceProjection, orderProjection, matchProjection, currencyCode).flatten
@@ -116,7 +119,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def placeOrders(sessionToken: String, marketId: String, instructions: Set[PlaceInstruction]): Future[Option[PlaceExecutionReportContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
@@ -127,7 +130,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   def cancelOrders(sessionToken: String, marketId: String, instructions: Set[CancelInstruction]):
   Future[Option[CancelExecutionReportContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
@@ -138,7 +141,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   def updateOrders(sessionToken: String, marketId: String, instructions: Set[UpdateInstruction]):
   Future[Option[UpdateExecutionReportContainer]] = {
 
-    import spray.httpx.PlayJsonSupport._
+    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
