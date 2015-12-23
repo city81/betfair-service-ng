@@ -53,6 +53,20 @@ class BetfairServiceNGCommand(val config: Configuration)
 
   }
 
+  def makeKeepAliveRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[KeepAliveResponse]): Future[Option[KeepAliveResponse]] = {
+
+    val pipeline =
+      addHeader("Accept", "application/json") ~>
+        addHeader("X-Application", config.appKey) ~>
+        addHeader("X-Authentication", sessionToken) ~>
+        sendReceive ~> checkStatusCodeAndUnmarshal[KeepAliveResponse]
+
+    pipeline {
+      Post(config.isoUrl + "/keepAlive")
+    }
+
+  }
+
   def makeAPIRequest[T](sessionToken: String, request: JsonrpcRequest)(implicit unmarshaller: FromResponseUnmarshaller[T]): Future[Option[T]] = {
 
     import spray.httpx.PlayJsonSupport._

@@ -27,6 +27,13 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     command.makeLoginRequest(request)
   }
 
+  def keepAlive(sessionToken: String): Future[Option[KeepAliveResponse]] = {
+
+    import spray.httpx.PlayJsonSupport._
+
+    command.makeKeepAliveRequest(sessionToken)
+  }
+
   def logout(sessionToken: String) {
 
     import spray.httpx.PlayJsonSupport._
