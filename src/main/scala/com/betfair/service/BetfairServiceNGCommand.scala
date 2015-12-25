@@ -41,6 +41,29 @@ class BetfairServiceNGCommand(val config: Configuration)
 
   }
 
+  def makeKeepAliveRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[KeepAliveResponse]): Future[Option[KeepAliveResponse]] = {
+
+    import HttpMethods._
+    import MediaTypes._
+
+    implicit val materializer = ActorMaterializer()
+
+    val accept = Accept(`application/json`)
+    val xApplication = RawHeader("X-Application", config.appKey)
+    val xAuthentication = RawHeader("X-Authentication", sessionToken)
+
+    val headers = Seq(accept, xApplication, xAuthentication)
+
+    for {
+      response <- Http().singleRequest(HttpRequest(
+        POST,
+        uri = config.isoUrl + "/keepAlive",
+        headers = headers.toList))
+      entity <- unmarshaller(response)
+    } yield Some(entity)
+
+  }
+
   def makeLogoutRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[LogoutResponse]) {
 
     import HttpCharsets._
