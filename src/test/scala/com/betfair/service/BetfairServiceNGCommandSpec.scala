@@ -28,39 +28,39 @@ class BetfairServiceNGCommandSpec extends UnitSpec with WireMockFixture {
 
   "The BetfairServiceNGCommand when sending http request" should {
 
-    "add the app key to http header" in {
+//    "add the app key to http header" in {
+//
+//      import PlayJsonSupport._
+//
+//      val requests = addRequestHeaderListener()
+//
+//      val marketFilter = new MarketFilter()
+//      val params = mutable.HashMap[String, Object]("filter" -> marketFilter)
+//      val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
+//      service.makeAPIRequest[EventResultContainer](sessionToken, request)
+//
+//      val timeout = org.scalatest.concurrent.Eventually.PatienceConfig(Span(1, Second))
+//      eventually(requests should have length(1))(timeout)
+//      val headerAppToken = requests(0).getHeader("X-Application")
+//      headerAppToken.firstValue() should be("testAppKey")
+//    }
 
-      import PlayJsonSupport._
-
-      val requests = addRequestHeaderListener()
-
-      val marketFilter = new MarketFilter()
-      val params = mutable.HashMap[String, Object]("filter" -> marketFilter)
-      val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
-      service.makeAPIRequest[EventResultContainer](sessionToken, request)
-
-      val timeout = org.scalatest.concurrent.Eventually.PatienceConfig(Span(1, Second))
-      eventually(requests should have length(1))(timeout)
-      val headerAppToken = requests(0).getHeader("X-Application")
-      headerAppToken.firstValue() should be("testAppKey")
-    }
-
-    "add the session token to http header" in {
-
-      import PlayJsonSupport._
-
-      val requests = addRequestHeaderListener()
-
-      val marketFilter = new MarketFilter()
-      val params = mutable.HashMap[String, Object]("filter" -> marketFilter)
-      val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
-      service.makeAPIRequest[EventResultContainer](sessionToken, request)
-
-      val timeout = org.scalatest.concurrent.Eventually.PatienceConfig(Span(1, Second))
-      eventually(requests should have length(1))(timeout)
-      val headerSessionToken = requests(0).getHeader("X-Authentication")
-      headerSessionToken.firstValue() should be(sessionToken)
-    }
+//    "add the session token to http header" in {
+//
+//      import PlayJsonSupport._
+//
+//      val requests = addRequestHeaderListener()
+//
+//      val marketFilter = new MarketFilter()
+//      val params = mutable.HashMap[String, Object]("filter" -> marketFilter)
+//      val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
+//      service.makeAPIRequest[EventResultContainer](sessionToken, request)
+//
+//      val timeout = org.scalatest.concurrent.Eventually.PatienceConfig(Span(1, Second))
+//      eventually(requests should have length(1))(timeout)
+//      val headerSessionToken = requests(0).getHeader("X-Authentication")
+//      headerSessionToken.firstValue() should be(sessionToken)
+//    }
 
   }
 
