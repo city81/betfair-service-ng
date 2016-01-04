@@ -36,6 +36,8 @@ dist
 *.classpath
 
 *.project
+/src/main/scala/com/betfair/robots/racing/MonitorKeyPriceRunners.scala
+/src/main/scala/com/betfair/robots/racing/MonitorLowWOMRunners.scala
 *.idea
 *.settings
 *.target
