@@ -4,11 +4,11 @@ import com.betfair.domain.ExecutionReportErrorCode.ExecutionReportErrorCode
 import com.betfair.domain.ExecutionReportStatus.ExecutionReportStatus
 import play.api.libs.json.Json
 
-case class PlaceExecutionReport(status: ExecutionReportStatus, marketId: String,
+case class ReplaceExecutionReport(status: ExecutionReportStatus, marketId: String,
                                 errorCode: Option[ExecutionReportErrorCode],
-                                instructionReports: Set[PlaceInstructionReport],
+                                instructionReports: Set[ReplaceInstructionReport],
                                 customerRef: Option[String])
 
-object PlaceExecutionReport {
-  implicit val readsPlaceExecutionReport = Json.reads[PlaceExecutionReport]
+object ReplaceExecutionReport {
+  implicit val readsReplaceExecutionReport = Json.reads[ReplaceExecutionReport]
 }

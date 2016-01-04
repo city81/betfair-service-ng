@@ -131,6 +131,17 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     command.makeAPIRequest[PlaceExecutionReportContainer](sessionToken, request)
   }
 
+  def replaceOrders(sessionToken: String, marketId: String, instructions: Set[ReplaceInstruction]):
+  Future[Option[ReplaceExecutionReportContainer]] = {
+
+    import spray.httpx.PlayJsonSupport._
+
+    val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
+
+    val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/replaceOrders", params = params)
+    command.makeAPIRequest[ReplaceExecutionReportContainer](sessionToken, request)
+  }
+
   def cancelOrders(sessionToken: String, marketId: String, instructions: Set[CancelInstruction]):
   Future[Option[CancelExecutionReportContainer]] = {
 

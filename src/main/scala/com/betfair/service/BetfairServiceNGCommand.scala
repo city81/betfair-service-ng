@@ -19,8 +19,15 @@ class BetfairServiceNGCommand(val config: Configuration)
     (futRes: Future[HttpResponse]) => futRes.map {
       res =>
         if (res.status == StatusCodes.OK) {
-//          println(res) // TODO replace with logging
-          Some(unmarshal[T](unmarshaller)(res))
+          try {
+            Some(unmarshal[T](unmarshaller)(res))
+          } catch {
+            case e: Exception => {
+              println(res)
+              println(e.getMessage)
+              None
+            }
+          }
         } else None
     }
 
