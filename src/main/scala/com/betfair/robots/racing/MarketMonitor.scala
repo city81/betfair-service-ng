@@ -52,16 +52,16 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
                     marketCatalogue.marketStartTime.get.minusMinutes(5).getMillis -
                       (new time.DateTime(DateTimeZone.UTC)).getMillis
 
-                  try {
-                    system.scheduler.scheduleOnce(
-                      Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-                      system.actorOf(Props(new MonitorShortPricedRunners(betfairServiceNG, sessionToken,
-                        marketCatalogue.marketId, marketCatalogue.marketStartTime)),
-                        raceActorName), "")
-                  } catch {
-                    case e: Exception =>
-                      println(marketCatalogue.marketStartTime.get + " " + raceActorName + " - already created")
-                  }
+//                  try {
+//                    system.scheduler.scheduleOnce(
+//                      Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
+//                      system.actorOf(Props(new MonitorShortPricedRunners(betfairServiceNG, sessionToken,
+//                        marketCatalogue.marketId, marketCatalogue.marketStartTime)),
+//                        raceActorName), "")
+//                  } catch {
+//                    case e: Exception =>
+//                      println(marketCatalogue.marketStartTime.get + " " + raceActorName + " - already created")
+//                  }
                 }
               }
             case Success(None) =>
