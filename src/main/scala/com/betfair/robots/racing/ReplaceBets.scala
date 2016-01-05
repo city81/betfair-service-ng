@@ -44,14 +44,16 @@ class ReplaceBets(betfairServiceNG: BetfairServiceNG, sessionToken: String, mark
                 instructionReport =>
                   instructionReport.placeInstructionReport.status match {
                     case Some(status) if status.equals(InstructionReportStatus.SUCCESS) =>
-                      println(marketId + " - " + report.instruction.get.selectionId + " - bet replaced")
                       system.scheduler.scheduleOnce(
                         Duration(15, TimeUnit.SECONDS),
                         system.actorOf(Props(new ReplaceBets(betfairServiceNG, sessionToken, marketId,
                           Set(instructionReport.placeInstructionReport))),
-                          DateTime.now().toString), "")
+                          DateTime.now().toString + report.instruction.get.selectionId + report.instruction.get.side), "")
+                      println(marketId + " - " + report.instruction.get.selectionId + " - "
+                        + report.instruction.get.side + " - bet replaced")
                     case _ =>
-                      println(marketId + " - " + report.instruction.get.selectionId + " - bet already matched")
+                      println(marketId + " - " + report.instruction.get.selectionId + " - "
+                        + report.instruction.get.side + " - bet already matched")
                   }
               }
             case _ =>

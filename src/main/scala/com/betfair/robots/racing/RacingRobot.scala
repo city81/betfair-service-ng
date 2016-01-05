@@ -27,7 +27,8 @@ object RacingRobot extends App {
   val betfairServiceNG = new BetfairServiceNG(config, betfairServiceNGCommand)
 
   // create top level actor
-  val racingRobotSupervisor = system.actorOf(Props(new RacingRobotSupervisor(betfairServiceNG)), "racing-robot-supervisor")
+  val racingRobotSupervisor = system.actorOf(Props(new RacingRobotSupervisor(betfairServiceNG)),
+    "racing-robot-supervisor")
 
   racingRobotSupervisor ! Start
 }
