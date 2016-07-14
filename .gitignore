@@ -28,14 +28,21 @@ logs
 project/project
 project/src/main/resources
 project/target
+/src/main/scala/com/betfair/robots/racing/MonitorCombinedRunners.scala
+/src/main/scala/com/betfair/robots/racing/ProcessLogFile.scala
+/src/main/scala/com/betfair/robots/racing/RaceDetail.scala
 target
 tmp
 *.history
 dist
 /*.iml
 /out
+/src/main/scala/com/betfair/robots/racing/MonitorBook.scala
+/src/main/scala/com/betfair/robots/racing/MonitorMissingPrices.scala
 /.idea_modules
 *.classpath
+/src/main/scala/com/betfair/robots/racing/MonitorLogPrices.scala
+/src/main/scala/com/betfair/robots/racing/MonitorSteamerRunners.scala
 
 *.project
 *.idea
@@ -44,3 +51,10 @@ dist
 
 betfair-service-ng.conf
 
+/src/main/scala/com/betfair/robots/football/missing
+/src/main/scala/com/betfair/robots/football/missing/FootballMissingRobot.scala
+/src/main/scala/com/betfair/robots/football/missing/FootballMissingRobotSupervisor.scala
+/src/main/scala/com/betfair/robots/football/missing/ReplaceBet.scala
+/src/main/scala/com/betfair/robots/football/missing/MarketMissingMonitor.scala
+/src/main/scala/com/betfair/robots/football/missing/MonitorMissingPrices.scala
+/src/main/scala/com/betfair/robots/racing/MonitorTrendingRunners.scala

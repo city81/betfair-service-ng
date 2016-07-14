@@ -45,7 +45,7 @@ class ReplaceBets(betfairServiceNG: BetfairServiceNG, sessionToken: String, mark
                   instructionReport.placeInstructionReport.status match {
                     case Some(status) if status.equals(InstructionReportStatus.SUCCESS) =>
                       system.scheduler.scheduleOnce(
-                        Duration(15, TimeUnit.SECONDS),
+                        Duration(8, TimeUnit.SECONDS),
                         system.actorOf(Props(new ReplaceBets(betfairServiceNG, sessionToken, marketId,
                           Set(instructionReport.placeInstructionReport))),
                           DateTime.now().toString + report.instruction.get.selectionId + report.instruction.get.side), "")
