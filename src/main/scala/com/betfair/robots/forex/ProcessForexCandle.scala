@@ -1,12 +1,15 @@
 package com.betfair.robots.forex
 
+import java.util.{Calendar, GregorianCalendar}
+
 import scala.collection.mutable.ListBuffer
 
 object ProcessForexCandle extends App {
 
   def process() = {
 
-    val markets = Vector("EURGBP")
+//    val markets = Vector("EURGBP", "EURUSD")
+    val markets = Vector("EURUSD")
 
     for (market <- markets) {
 
@@ -44,8 +47,8 @@ object ProcessForexCandle extends App {
 
       }
 
-//      for (dropNumber <- 0 until (forexDataList.length - 5)) {
-        for (dropNumber <- 0 until 1) {
+      for (dropNumber <- 0 until (forexDataList.length - 20)) {
+//        for (dropNumber <- 0 until 1) {
 
         var hourlyForexDataList = forexDataList.reverse.toList.drop(dropNumber)
 
@@ -59,10 +62,11 @@ object ProcessForexCandle extends App {
           val firstHourList = Array("00", "02", "04", "06", "08", "10", "12", "14", "16", "18", "20", "22")
           if (firstHourList contains lastHour(0)) {
             twoHourlyForexDataList = populateTwoHourlyList(hourlyForexDataList.drop(1))
+            candlestick(twoHourlyForexDataList, "2 hr")
           } else {
             twoHourlyForexDataList = populateTwoHourlyList(hourlyForexDataList)
+            candlestick(twoHourlyForexDataList, "2 hr")
           }
-          candlestick(twoHourlyForexDataList, "2 hr")
         }
 
         // 3 hr analysis
@@ -72,13 +76,23 @@ object ProcessForexCandle extends App {
           val firstHourList = Array("00", "03", "06", "09", "12", "15", "18", "21")
           val secondHourList = Array("01", "04", "07", "10", "13", "16", "19", "22")
           if (firstHourList contains lastHour(0)) {
-            threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(1))
+            var date = new GregorianCalendar(hourlyForexDataList(0).date.substring(0,4).toInt,
+              hourlyForexDataList(0).date.substring(4,6).toInt - 1,
+              hourlyForexDataList(0).date.substring(6,8).toInt)
+            if (date.get(Calendar.DAY_OF_WEEK).equals(6) && hourlyForexDataList(0).time.equals("21:00:00")) {
+              threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList)
+              candlestick(threeHourlyForexDataList, "3 hr")
+            } else {
+              threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(1))
+              candlestick(threeHourlyForexDataList, "3 hr")
+            }
           } else if (secondHourList contains lastHour(0)) {
             threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(2))
+            candlestick(threeHourlyForexDataList, "3 hr")
           } else {
             threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList)
+            candlestick(threeHourlyForexDataList, "3 hr")
           }
-          candlestick(threeHourlyForexDataList, "3 hr")
         }
 
         // 4 hr analysis
@@ -90,28 +104,43 @@ object ProcessForexCandle extends App {
           val thirdHourList = Array("02", "06", "10", "14", "18", "22")
           if (firstHourList contains lastHour(0)) {
             fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList.drop(1))
+            candlestick(fourHourlyForexDataList, "4 hr")
           } else if (secondHourList contains lastHour(0)) {
-            fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList.drop(2))
+            var date = new GregorianCalendar(hourlyForexDataList(0).date.substring(0,4).toInt,
+              hourlyForexDataList(0).date.substring(4,6).toInt - 1,
+              hourlyForexDataList(0).date.substring(6,8).toInt)
+            if (date.get(Calendar.DAY_OF_WEEK).equals(6) && hourlyForexDataList(0).time.equals("21:00:00")) {
+              fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList)
+              candlestick(fourHourlyForexDataList, "4 hr")
+            } else if (date.get(Calendar.DAY_OF_WEEK).equals(1) && hourlyForexDataList(0).time.equals("21:00:00")) {
+              fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList.drop(1))
+              candlestick(fourHourlyForexDataList, "4 hr")
+            } else if (date.get(Calendar.DAY_OF_WEEK).equals(1) && hourlyForexDataList(0).time.equals("22:00:00")) {
+              fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList.drop(2))
+              candlestick(fourHourlyForexDataList, "4 hr")
+            } else {
+              fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList.drop(2))
+              candlestick(fourHourlyForexDataList, "4 hr")
+            }
           } else if (thirdHourList contains lastHour(0)) {
             fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList.drop(3))
+            candlestick(fourHourlyForexDataList, "4 hr")
           } else {
             fourHourlyForexDataList = populateFourHourlyList(hourlyForexDataList)
+            candlestick(fourHourlyForexDataList, "4 hr")
           }
-          candlestick(fourHourlyForexDataList, "4 hr")
         }
 
         // 1 day analysis
-        {
-          var oneDayForexDataList: List[ForexDetailCandle] = List.empty
-
-          var dropCount = 0
-          while (!hourlyForexDataList(dropCount).time.split(":")(0).equals("23")) {
-            dropCount = dropCount + 1
-          }
-
+//        {
+//          var oneDayForexDataList: List[ForexDetailCandle] = List.empty
+//
+//          var dropCount = 0
+//          while (!hourlyForexDataList(dropCount).time.split(":")(0).equals("23")) {
+//            dropCount = dropCount + 1
+//          }
 //          candlestick(populateOneDayList(hourlyForexDataList.drop(dropCount)), "1 day")
-
-        }
+//        }
 
         println("---")
         println
@@ -122,48 +151,116 @@ object ProcessForexCandle extends App {
 
   def populateTwoHourlyList(forexDataList: List[ForexDetailCandle]): List[ForexDetailCandle] = {
 
-    val twoHourlyForexDataList = new ListBuffer[ForexDetailCandle]
+    // for every Sun 21:00 add a Sun 20:00 entry with the same values
+    val amendedForexDataList = new ListBuffer[ForexDetailCandle]
 
-    for (i <- 0 until forexDataList.length by 2) {
+    for (forexDetailCandle <- forexDataList) {
 
-      var forexDetail = forexDataList(i)
+      var date = new GregorianCalendar(forexDetailCandle.date.substring(0,4).toInt,
+        forexDetailCandle.date.substring(4,6).toInt - 1,
+        forexDetailCandle.date.substring(6,8).toInt)
 
-      var twoHourlyForexDetail = new ForexDetailCandle(
-        forexDetail.market,
-        forexDetail.date,
-        forexDetail.time,
-        forexDetail.open,
-        forexDetail.high,
-        forexDetail.low,
-        forexDetail.close
-      )
+      if (date.get(Calendar.DAY_OF_WEEK).equals(1) && forexDetailCandle.time.equals("21:00:00")) {
 
-      // update with second hour
-      twoHourlyForexDetail.open = forexDataList(i + 1).open
-      twoHourlyForexDetail.date = forexDataList(i + 1).date
-      twoHourlyForexDetail.time = forexDataList(i + 1).time
+        amendedForexDataList += forexDetailCandle
 
-      if (forexDataList(i + 1).high > twoHourlyForexDetail.high) {
-        twoHourlyForexDetail.high = forexDataList(i + 1).high
+        var tempForexDetail = new ForexDetailCandle(
+          forexDetailCandle.market,
+          forexDetailCandle.date,
+          "20:00:00",
+          forexDetailCandle.open,
+          forexDetailCandle.high,
+          forexDetailCandle.low,
+          forexDetailCandle.close
+        )
+        amendedForexDataList += tempForexDetail
+
+      } else {
+        amendedForexDataList += forexDetailCandle
       }
-      if (forexDataList(i + 1).low < twoHourlyForexDetail.low) {
-        twoHourlyForexDetail.low = forexDataList(i + 1).low
-      }
-
-      twoHourlyForexDataList += twoHourlyForexDetail
-
     }
 
+      val twoHourlyForexDataList = new ListBuffer[ForexDetailCandle]
+
+      for (i <- 0 until amendedForexDataList.length by 2) {
+
+        var forexDetail = amendedForexDataList(i)
+
+        var twoHourlyForexDetail = new ForexDetailCandle(
+          forexDetail.market,
+          forexDetail.date,
+          forexDetail.time,
+          forexDetail.open,
+          forexDetail.high,
+          forexDetail.low,
+          forexDetail.close
+        )
+
+        // update with second hour
+        twoHourlyForexDetail.open = amendedForexDataList(i + 1).open
+        twoHourlyForexDetail.date = amendedForexDataList(i + 1).date
+        twoHourlyForexDetail.time = amendedForexDataList(i + 1).time
+
+        if (amendedForexDataList(i + 1).high > twoHourlyForexDetail.high) {
+          twoHourlyForexDetail.high = amendedForexDataList(i + 1).high
+        }
+        if (amendedForexDataList(i + 1).low < twoHourlyForexDetail.low) {
+          twoHourlyForexDetail.low = amendedForexDataList(i + 1).low
+        }
+
+        twoHourlyForexDataList += twoHourlyForexDetail
+
+      }
     twoHourlyForexDataList.toList
   }
 
   def populateThreeHourlyList(forexDataList: List[ForexDetailCandle]): List[ForexDetailCandle] = {
 
+    // for every Fri 21:00 add a Fri 22:00 and a Fri 23:00 entry with the same values
+    val amendedForexDataList = new ListBuffer[ForexDetailCandle]
+
+    for (forexDetailCandle <- forexDataList) {
+
+      var date = new GregorianCalendar(forexDetailCandle.date.substring(0,4).toInt,
+        forexDetailCandle.date.substring(4,6).toInt - 1,
+        forexDetailCandle.date.substring(6,8).toInt)
+
+      if (date.get(Calendar.DAY_OF_WEEK).equals(6) && forexDetailCandle.time.equals("21:00:00")) {
+
+        var tempForexDetail = new ForexDetailCandle(
+          forexDetailCandle.market,
+          forexDetailCandle.date,
+          "23:00:00",
+          forexDetailCandle.open,
+          forexDetailCandle.high,
+          forexDetailCandle.low,
+          forexDetailCandle.close
+        )
+        amendedForexDataList += tempForexDetail
+
+        tempForexDetail = new ForexDetailCandle(
+          forexDetailCandle.market,
+          forexDetailCandle.date,
+          "22:00:00",
+          forexDetailCandle.open,
+          forexDetailCandle.high,
+          forexDetailCandle.low,
+          forexDetailCandle.close
+        )
+        amendedForexDataList += tempForexDetail
+
+        amendedForexDataList += forexDetailCandle
+
+      } else {
+        amendedForexDataList += forexDetailCandle
+      }
+    }
+
     val threeHourlyForexDataList = new ListBuffer[ForexDetailCandle]
 
-    for (i <- 0 until forexDataList.length by 3) {
+    for (i <- 0 until amendedForexDataList.length by 3) {
 
-      var forexDetail = forexDataList(i)
+      var forexDetail = amendedForexDataList(i)
 
       var threeHourlyForexDetail = new ForexDetailCandle(
         forexDetail.market,
@@ -176,23 +273,23 @@ object ProcessForexCandle extends App {
       )
 
       // update with second hour
-      if (forexDataList(i + 1).high > threeHourlyForexDetail.high) {
-        threeHourlyForexDetail.high = forexDataList(i + 1).high
+      if (amendedForexDataList(i + 1).high > threeHourlyForexDetail.high) {
+        threeHourlyForexDetail.high = amendedForexDataList(i + 1).high
       }
-      if (forexDataList(i + 1).low < threeHourlyForexDetail.low) {
-        threeHourlyForexDetail.low = forexDataList(i + 1).low
+      if (amendedForexDataList(i + 1).low < threeHourlyForexDetail.low) {
+        threeHourlyForexDetail.low = amendedForexDataList(i + 1).low
       }
 
       // update with third hour
-      threeHourlyForexDetail.open = forexDataList(i + 2).open
-      threeHourlyForexDetail.date = forexDataList(i + 2).date
-      threeHourlyForexDetail.time = forexDataList(i + 2).time
+      threeHourlyForexDetail.open = amendedForexDataList(i + 2).open
+      threeHourlyForexDetail.date = amendedForexDataList(i + 2).date
+      threeHourlyForexDetail.time = amendedForexDataList(i + 2).time
 
-      if (forexDataList(i + 2).high > threeHourlyForexDetail.high) {
-        threeHourlyForexDetail.high = forexDataList(i + 2).high
+      if (amendedForexDataList(i + 2).high > threeHourlyForexDetail.high) {
+        threeHourlyForexDetail.high = amendedForexDataList(i + 2).high
       }
-      if (forexDataList(i + 2).low < threeHourlyForexDetail.low) {
-        threeHourlyForexDetail.low = forexDataList(i + 2).low
+      if (amendedForexDataList(i + 2).low < threeHourlyForexDetail.low) {
+        threeHourlyForexDetail.low = amendedForexDataList(i + 2).low
       }
 
       threeHourlyForexDataList += threeHourlyForexDetail
@@ -204,11 +301,67 @@ object ProcessForexCandle extends App {
 
   def populateFourHourlyList(forexDataList: List[ForexDetailCandle]): List[ForexDetailCandle] = {
 
+    // for every Fri 21:00 add a Fri 22:00 and a Fri 23:00 entry with the same values
+    // for every Sun 21:00 add a Sun 20:00 entry with the same values
+    val amendedForexDataList = new ListBuffer[ForexDetailCandle]
+
+    for (forexDetailCandle <- forexDataList) {
+
+      var date = new GregorianCalendar(forexDetailCandle.date.substring(0,4).toInt,
+        forexDetailCandle.date.substring(4,6).toInt - 1,
+        forexDetailCandle.date.substring(6,8).toInt)
+
+      if (date.get(Calendar.DAY_OF_WEEK).equals(6) && forexDetailCandle.time.equals("21:00:00")) {
+
+        var tempForexDetail = new ForexDetailCandle(
+          forexDetailCandle.market,
+          forexDetailCandle.date,
+          "23:00:00",
+          forexDetailCandle.open,
+          forexDetailCandle.high,
+          forexDetailCandle.low,
+          forexDetailCandle.close
+        )
+        amendedForexDataList += tempForexDetail
+
+        tempForexDetail = new ForexDetailCandle(
+          forexDetailCandle.market,
+          forexDetailCandle.date,
+          "22:00:00",
+          forexDetailCandle.open,
+          forexDetailCandle.high,
+          forexDetailCandle.low,
+          forexDetailCandle.close
+        )
+        amendedForexDataList += tempForexDetail
+
+        amendedForexDataList += forexDetailCandle
+
+      } else if (date.get(Calendar.DAY_OF_WEEK).equals(1) && forexDetailCandle.time.equals("21:00:00")) {
+
+        amendedForexDataList += forexDetailCandle
+
+        var tempForexDetail = new ForexDetailCandle(
+          forexDetailCandle.market,
+          forexDetailCandle.date,
+          "20:00:00",
+          forexDetailCandle.open,
+          forexDetailCandle.high,
+          forexDetailCandle.low,
+          forexDetailCandle.close
+        )
+        amendedForexDataList += tempForexDetail
+
+      } else {
+        amendedForexDataList += forexDetailCandle
+      }
+    }
+
     val fourHourlyForexDataList = new ListBuffer[ForexDetailCandle]
 
-    for (i <- 0 until forexDataList.length by 4) {
+    for (i <- 0 until amendedForexDataList.length by 4) {
 
-      var forexDetail = forexDataList(i)
+      var forexDetail = amendedForexDataList(i)
 
       var fourHourlyForexDetail = new ForexDetailCandle(
         forexDetail.market,
@@ -221,31 +374,31 @@ object ProcessForexCandle extends App {
       )
 
       // update with second hour
-      if (forexDataList(i + 1).high > fourHourlyForexDetail.high) {
-        fourHourlyForexDetail.high = forexDataList(i + 1).high
+      if (amendedForexDataList(i + 1).high > fourHourlyForexDetail.high) {
+        fourHourlyForexDetail.high = amendedForexDataList(i + 1).high
       }
-      if (forexDataList(i + 1).low < fourHourlyForexDetail.low) {
-        fourHourlyForexDetail.low = forexDataList(i + 1).low
+      if (amendedForexDataList(i + 1).low < fourHourlyForexDetail.low) {
+        fourHourlyForexDetail.low = amendedForexDataList(i + 1).low
       }
 
       // update with third hour
-      if (forexDataList(i + 2).high > fourHourlyForexDetail.high) {
-        fourHourlyForexDetail.high = forexDataList(i + 2).high
+      if (amendedForexDataList(i + 2).high > fourHourlyForexDetail.high) {
+        fourHourlyForexDetail.high = amendedForexDataList(i + 2).high
       }
-      if (forexDataList(i + 2).low < fourHourlyForexDetail.low) {
-        fourHourlyForexDetail.low = forexDataList(i + 2).low
+      if (amendedForexDataList(i + 2).low < fourHourlyForexDetail.low) {
+        fourHourlyForexDetail.low = amendedForexDataList(i + 2).low
       }
 
       // update with fourth hour
-      fourHourlyForexDetail.open = forexDataList(i + 3).open
-      fourHourlyForexDetail.date = forexDataList(i + 3).date
-      fourHourlyForexDetail.time = forexDataList(i + 3).time
+      fourHourlyForexDetail.open = amendedForexDataList(i + 3).open
+      fourHourlyForexDetail.date = amendedForexDataList(i + 3).date
+      fourHourlyForexDetail.time = amendedForexDataList(i + 3).time
 
-      if (forexDataList(i + 3).high > fourHourlyForexDetail.high) {
-        fourHourlyForexDetail.high = forexDataList(i + 3).high
+      if (amendedForexDataList(i + 3).high > fourHourlyForexDetail.high) {
+        fourHourlyForexDetail.high = amendedForexDataList(i + 3).high
       }
-      if (forexDataList(i + 3).low < fourHourlyForexDetail.low) {
-        fourHourlyForexDetail.low = forexDataList(i + 3).low
+      if (amendedForexDataList(i + 3).low < fourHourlyForexDetail.low) {
+        fourHourlyForexDetail.low = amendedForexDataList(i + 3).low
       }
 
       fourHourlyForexDataList += fourHourlyForexDetail
@@ -325,16 +478,15 @@ object ProcessForexCandle extends App {
       println("Bullish White Marubozu")
     }
     if ((forexDataMinusOne.open > forexDataMinusOne.close)
-      && (forexData.close > forexData.open) && (forexData.close >= forexDataMinusOne.open)
-      && (forexDataMinusOne.close >= forexData.open)
-      && ((forexData.close - forexData.open) > (forexDataMinusOne.open - forexDataMinusOne.close))) {
+      && (forexData.close > forexData.open)
+      && (forexData.close > forexDataMinusOne.open)
+      && (forexDataMinusOne.close > forexData.open)) {
       println("Bullish Engulfing")
     }
     if ((forexDataMinusOne.close > forexDataMinusOne.open)
       && (forexData.open > forexData.close) &&
-      (forexData.open >= forexDataMinusOne.close) &&
-      (forexDataMinusOne.open >= forexData.close)
-      && ((forexData.open - forexData.close) > (forexDataMinusOne.close - forexDataMinusOne.open))) {
+      (forexData.open > forexDataMinusOne.close) &&
+      (forexDataMinusOne.open > forexData.close)) {
       println("Bearish Engulfing");
     }
     if (((forexData.close == forexData.high)
