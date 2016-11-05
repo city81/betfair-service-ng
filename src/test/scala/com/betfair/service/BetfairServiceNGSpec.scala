@@ -52,7 +52,7 @@ class BetfairServiceNGSpec extends FlatSpec with ShouldMatchers with MockFactory
         case Some(container) =>
           container.result.size should be(1)
           container.result(0).marketCount should be(1)
-          container.result(0).eventType.id should be(eventTypeId)
+          container.result(0).event.id should be(eventTypeId)
         case _ =>
           fail()
       }
