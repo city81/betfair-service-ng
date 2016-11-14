@@ -113,7 +113,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - rp and post - same - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - rp and post - same - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -148,7 +148,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - rp and post - same - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - rp and post - same - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -183,7 +183,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - rp and post - same - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - rp and post - same - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -220,7 +220,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - rp and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - rp and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -255,7 +255,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - rp and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - rp and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -290,7 +290,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - rp and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - rp and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -325,7 +325,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - post and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - post and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -360,7 +360,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - post and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - post and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -395,7 +395,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - post and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - post and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -432,7 +432,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - post and rp - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - post and rp - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -467,7 +467,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - post and rp - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - post and rp - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -502,7 +502,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - post and rp - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - post and rp - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -541,7 +541,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - post and top - same - rp - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - post and top - same - rp - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -580,7 +580,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - post and top - same - rp - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - post and top - same - rp - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -619,7 +619,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - post and top - same - rp - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - post and top - same - rp - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -659,7 +659,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - rp and top - same - post - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - rp and top - same - post - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -698,7 +698,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - rp and top - same - post - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - rp and top - same - post - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -737,7 +737,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - rp and top - same - post - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - rp and top - same - post - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -776,7 +776,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - rp and post - same - top - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - rp and post - same - top - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -815,7 +815,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - rp and post - same - top - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - rp and post - same - top - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -854,7 +854,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - rp and post - same - top - diff - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - rp and post - same - top - diff - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -893,7 +893,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - post and rp and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - post and rp and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -932,7 +932,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - post and rp and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - post and rp and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -971,7 +971,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - post and rp and top - different - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - post and rp and top - different - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -1003,7 +1003,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - post only - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - post only - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -1035,7 +1035,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - post only - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - post only - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -1067,12 +1067,107 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - post only - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - post only - " + raceType -> (winners.toDouble / selections))
         }
       }
     }
 
+    // three places - rp only
+    for (raceType <- raceTypes) {
+      println()
+      var winners = 0
+      var selections = 0
+      for (placepotDetailKey <- placepotList.keys) {
+        var detailRacetype = placepotDetailKey.split("-")(3)
+        var runners = placepotDetailKey.split("-")(4).toInt
+        var placepotDetail = placepotList.get(placepotDetailKey)
+        if (detailRacetype.equals(raceType)) {
+          if (runners > 7) {
+            if (placepotDetail.get.rpRatingsSelection.isDefined &&
+              !placepotDetail.get.postdataSelection.isDefined &&
+              !placepotDetail.get.topspeedSelection.isDefined) {
+              if ((placepotDetail.get.rpRatingsSelectionPlaced.isDefined &&
+                placepotDetail.get.rpRatingsSelectionPlaced.get.equals("Y"))) {
+                winners = winners + 1
+              }
+              selections = selections + 1
+            }
+          }
+        }
+      }
+      if (true) {
+        println("three places - rp only - " + raceType)
+        println(winners + " / " + selections + " = " + (winners.toDouble / selections))
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
+          resultMap += ("three places - rp only - " + raceType -> (winners.toDouble / selections))
+        }
+      }
+    }
+
+    // two places - rp only
+    for (raceType <- raceTypes) {
+      println()
+      var winners = 0
+      var selections = 0
+      for (placepotDetailKey <- placepotList.keys) {
+        var detailRacetype = placepotDetailKey.split("-")(3)
+        var runners = placepotDetailKey.split("-")(4).toInt
+        var placepotDetail = placepotList.get(placepotDetailKey)
+        if (detailRacetype.equals(raceType)) {
+          if ((runners > 4) && (runners < 8)) {
+            if (placepotDetail.get.rpRatingsSelection.isDefined &&
+              !placepotDetail.get.postdataSelection.isDefined &&
+              !placepotDetail.get.topspeedSelection.isDefined) {
+              if ((placepotDetail.get.rpRatingsSelectionPlaced.isDefined &&
+                placepotDetail.get.rpRatingsSelectionPlaced.get.equals("Y"))) {
+                winners = winners + 1
+              }
+              selections = selections + 1
+            }
+          }
+        }
+      }
+      if (true) {
+        println("two places - rp only - " + raceType)
+        println(winners + " / " + selections + " = " + (winners.toDouble / selections))
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
+          resultMap += ("two places - rp only - " + raceType -> (winners.toDouble / selections))
+        }
+      }
+    }
+
+    // one place - rp only
+    for (raceType <- raceTypes) {
+      println()
+      var winners = 0
+      var selections = 0
+      for (placepotDetailKey <- placepotList.keys) {
+        var detailRacetype = placepotDetailKey.split("-")(3)
+        var runners = placepotDetailKey.split("-")(4).toInt
+        var placepotDetail = placepotList.get(placepotDetailKey)
+        if (detailRacetype.equals(raceType)) {
+          if (runners < 5) {
+            if (placepotDetail.get.rpRatingsSelection.isDefined &&
+              !placepotDetail.get.postdataSelection.isDefined &&
+              !placepotDetail.get.topspeedSelection.isDefined) {
+              if ((placepotDetail.get.rpRatingsSelectionPlaced.isDefined &&
+                placepotDetail.get.rpRatingsSelectionPlaced.get.equals("Y"))) {
+                winners = winners + 1
+              }
+              selections = selections + 1
+            }
+          }
+        }
+      }
+      if (true) {
+        println("one place - rp only - " + raceType)
+        println(winners + " / " + selections + " = " + (winners.toDouble / selections))
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
+          resultMap += ("one place - rp only - " + raceType -> (winners.toDouble / selections))
+        }
+      }
+    }
 
     // three places - post and rp and top - all same
     for (raceType <- raceTypes) {
@@ -1107,7 +1202,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("three places - post and rp and top - all same - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("three places - post and rp and top - all same - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -1146,7 +1241,7 @@ object ProcessPlacepot extends App {
       if (true) {
         println("two places - post and rp and top - all same - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("two places - post and rp and top - all same - " + raceType -> (winners.toDouble / selections))
         }
       }
@@ -1185,17 +1280,17 @@ object ProcessPlacepot extends App {
       if (true) {
         println("one place - post and rp and top - all same - " + raceType)
         println(winners + " / " + selections + " = " + (winners.toDouble / selections))
-        if (selections >= 0) {
+        if ((selections >= 5) && ((winners.toDouble / selections) >= 0.75)) {
           resultMap += ("one place - post and rp and top - all same - " + raceType -> (winners.toDouble / selections))
         }
       }
     }
 
     // sort result map
-//    println()
-//    resultMap.toSeq.sortBy(_._2).reverse.foreach {
-//      println
-//    }
+    println()
+    resultMap.toSeq.sortBy(_._2).reverse.foreach {
+        println
+    }
 
     println
     println
@@ -1273,6 +1368,10 @@ object ProcessPlacepot extends App {
         !placepotDetail.get.rpRatingsSelection.isDefined &&
         !placepotDetail.get.topspeedSelection.isDefined) {
         buildKey += "post only - "
+      } else if (placepotDetail.get.rpRatingsSelection.isDefined &&
+        !placepotDetail.get.postdataSelection.isDefined &&
+        !placepotDetail.get.topspeedSelection.isDefined) {
+        buildKey += "rp only - "
       } else {
         buildKey += "not found"
       }

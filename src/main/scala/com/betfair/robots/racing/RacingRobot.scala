@@ -9,7 +9,7 @@ import com.typesafe.config.ConfigFactory
 
 object RacingRobot extends App {
 
-  // create the systema nd the dispatcher
+  // create the system and the dispatcher
   implicit val system = ActorSystem("racing-robot")
   implicit val executionContext = system.dispatcher
 

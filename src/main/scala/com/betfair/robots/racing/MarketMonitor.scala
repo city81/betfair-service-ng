@@ -23,6 +23,12 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
       betfairServiceNG.keepAlive(sessionToken).map {
         case Some(keepAliveResponse) =>
 
+//          println((new time.DateTime(DateTimeZone.UTC)) + " producing historical map - started")
+
+//          val historicalPricesMap = (new ProcessHistoricalFiles()).process
+
+//          println((new time.DateTime(DateTimeZone.UTC)) + " producing historical map - complete")
+
           // list all horse racing markets in the next 24 hour period
           val marketStartTime = new TimeRange(Some(new time.DateTime()), Some((new time.DateTime()).plusDays(1)))
           val listMarketCatalogueMarketFilter = new MarketFilter(eventTypeIds = Set(7),
@@ -49,13 +55,13 @@ class MarketMonitor(betfairServiceNG: BetfairServiceNG) extends Actor {
                   println(marketCatalogue.marketStartTime.get + " " + raceActorName)
 
                   val millisecondsBeforeMonitoring =
-                    marketCatalogue.marketStartTime.get.minusMinutes(5).getMillis -
+                    marketCatalogue.marketStartTime.get.getMillis -
                       (new time.DateTime(DateTimeZone.UTC)).getMillis
 
                   try {
                     system.scheduler.scheduleOnce(
                       Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-                      system.actorOf(Props(new MonitorBetfairFavouriteIntervals(betfairServiceNG, sessionToken,
+                      system.actorOf(Props(new MonitorInPlayFav(betfairServiceNG, sessionToken,
                         marketCatalogue.marketId, marketCatalogue.marketStartTime)),
                         raceActorName), "")
                   } catch {

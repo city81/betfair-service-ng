@@ -26,7 +26,7 @@ class ReplaceBet(betfairServiceNG: BetfairServiceNG,
 
       // check if price has been matched or has moved against us
       val priceBoundRunners = betfairServiceNG.getPriceBoundRunners(sessionToken, marketId = marketId,
-        lowerPrice = 1.00, higherPrice = 10.0
+        lowerPrice = 1.00, higherPrice = 16.0
       ) map { response =>
         response match {
           case Some(runners) =>

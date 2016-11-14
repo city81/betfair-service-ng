@@ -9,7 +9,7 @@ object ProcessForexCandle extends App {
   def process() = {
 
 //    val markets = Vector("EURGBP", "EURUSD")
-    val markets = Vector("EURUSD")
+    val markets = Vector("EURGBP")
 
     for (market <- markets) {
 
@@ -47,7 +47,7 @@ object ProcessForexCandle extends App {
 
       }
 
-      for (dropNumber <- 0 until (forexDataList.length - 20)) {
+      for (dropNumber <- 0 until (forexDataList.length - 2)) {
 //        for (dropNumber <- 0 until 1) {
 
         var hourlyForexDataList = forexDataList.reverse.toList.drop(dropNumber)
@@ -68,33 +68,33 @@ object ProcessForexCandle extends App {
             candlestick(twoHourlyForexDataList, "2 hr")
           }
         }
-
-        // 3 hr analysis
-        {
-          var threeHourlyForexDataList: List[ForexDetailCandle] = List.empty
-          val lastHour = hourlyForexDataList(0).time.split(":")
-          val firstHourList = Array("00", "03", "06", "09", "12", "15", "18", "21")
-          val secondHourList = Array("01", "04", "07", "10", "13", "16", "19", "22")
-          if (firstHourList contains lastHour(0)) {
-            var date = new GregorianCalendar(hourlyForexDataList(0).date.substring(0,4).toInt,
-              hourlyForexDataList(0).date.substring(4,6).toInt - 1,
-              hourlyForexDataList(0).date.substring(6,8).toInt)
-            if (date.get(Calendar.DAY_OF_WEEK).equals(6) && hourlyForexDataList(0).time.equals("21:00:00")) {
-              threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList)
-              candlestick(threeHourlyForexDataList, "3 hr")
-            } else {
-              threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(1))
-              candlestick(threeHourlyForexDataList, "3 hr")
-            }
-          } else if (secondHourList contains lastHour(0)) {
-            threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(2))
-            candlestick(threeHourlyForexDataList, "3 hr")
-          } else {
-            threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList)
-            candlestick(threeHourlyForexDataList, "3 hr")
-          }
-        }
-
+//
+//        // 3 hr analysis
+//        {
+//          var threeHourlyForexDataList: List[ForexDetailCandle] = List.empty
+//          val lastHour = hourlyForexDataList(0).time.split(":")
+//          val firstHourList = Array("00", "03", "06", "09", "12", "15", "18", "21")
+//          val secondHourList = Array("01", "04", "07", "10", "13", "16", "19", "22")
+//          if (firstHourList contains lastHour(0)) {
+//            var date = new GregorianCalendar(hourlyForexDataList(0).date.substring(0,4).toInt,
+//              hourlyForexDataList(0).date.substring(4,6).toInt - 1,
+//              hourlyForexDataList(0).date.substring(6,8).toInt)
+//            if (date.get(Calendar.DAY_OF_WEEK).equals(6) && hourlyForexDataList(0).time.equals("21:00:00")) {
+//              threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList)
+//              candlestick(threeHourlyForexDataList, "3 hr")
+//            } else {
+//              threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(1))
+//              candlestick(threeHourlyForexDataList, "3 hr")
+//            }
+//          } else if (secondHourList contains lastHour(0)) {
+//            threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList.drop(2))
+//            candlestick(threeHourlyForexDataList, "3 hr")
+//          } else {
+//            threeHourlyForexDataList = populateThreeHourlyList(hourlyForexDataList)
+//            candlestick(threeHourlyForexDataList, "3 hr")
+//          }
+//        }
+//
         // 4 hr analysis
         {
           var fourHourlyForexDataList: List[ForexDetailCandle] = List.empty
@@ -579,16 +579,15 @@ object ProcessForexCandle extends App {
       (forexDataMinusTwo.open < forexDataMinusOne.close) &&
       (forexData.close > forexDataMinusOne.close) &&
       (forexData.close > forexData.open)) {
-      println("Bullish Engulfing Three Outside Up")
+      println("Bullish Three Outside Up")
     }
-    if ((forexDataMinusTwo.open > forexDataMinusTwo.close)
-      && (forexDataMinusOne.close > forexDataMinusOne.open)
-      && (forexDataMinusOne.close < forexDataMinusTwo.open)
-      && (forexDataMinusTwo.close < forexDataMinusOne.open)
-      && (forexData.close > forexData.open)
-      && (forexData.close > forexDataMinusOne.close)
-      && (forexData.open > forexDataMinusOne.open)) {
-      println("Bullish Engulfing Three Inside Up")
+    if ((forexDataMinusTwo.open > forexDataMinusTwo.close) &&
+      (forexDataMinusOne.close > forexDataMinusOne.open) &&
+      (forexDataMinusTwo.close < forexDataMinusOne.open) &&
+      (forexDataMinusTwo.open > forexDataMinusOne.close) &&
+      (forexData.close > forexData.open) &&
+      (forexData.close > forexDataMinusTwo.high)) {
+      println("Bullish Three Inside Up")
     }
     if ((forexDataMinusTwo.open < forexDataMinusTwo.close) &&
       (forexDataMinusOne.close < forexDataMinusOne.open) &&
@@ -596,13 +595,15 @@ object ProcessForexCandle extends App {
       (forexDataMinusTwo.open > forexDataMinusOne.close) &&
       (forexData.close < forexDataMinusOne.close) &&
       (forexData.close < forexData.open)) {
-      println("Bearish Engulfing Three Outside Down")
+      println("Bearish Three Outside Down")
     }
-    if ((forexDataMinusTwo.close > forexDataMinusTwo.open) && (forexDataMinusOne.open > forexDataMinusOne.close)
-      && (forexDataMinusOne.open <= forexDataMinusTwo.close) && (forexDataMinusTwo.open <= forexDataMinusOne.close) &&
-      ((forexDataMinusOne.open - forexDataMinusOne.close) < (forexDataMinusTwo.close - forexDataMinusTwo.open))
-      && (forexData.open > forexData.close) && (forexData.close > forexDataMinusOne.close)) {
-      println("Bearish Engulfing Three Inside Down")
+    if ((forexDataMinusTwo.open < forexDataMinusTwo.close) &&
+      (forexDataMinusOne.close < forexDataMinusOne.open) &&
+      (forexDataMinusTwo.close > forexDataMinusOne.open) &&
+      (forexDataMinusTwo.open < forexDataMinusOne.close) &&
+      (forexData.close < forexData.open) &&
+      (forexData.close < forexDataMinusTwo.low)) {
+      println("Bearish Three Inside Down")
     }
     if ((forexDataMinusOne.open > forexDataMinusOne.close) &&
       (forexData.close > forexData.open) &&
