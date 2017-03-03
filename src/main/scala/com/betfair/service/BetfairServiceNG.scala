@@ -1,7 +1,6 @@
 package com.betfair.service
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import com.betfair.Configuration
 import com.betfair.domain.MarketProjection.MarketProjection
 import com.betfair.domain.MarketSort.MarketSort
