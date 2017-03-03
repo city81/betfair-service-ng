@@ -106,6 +106,7 @@ class BetfairServiceNGCommand(val config: Configuration)
     import HttpCharsets._
     import HttpMethods._
     import MediaTypes._
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
     implicit val materializer = ActorMaterializer()
 

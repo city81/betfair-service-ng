@@ -41,8 +41,8 @@ libraryDependencies ++= {
     "org.codehaus.plexus" % "plexus-utils" % "1.5.7",
     "com.typesafe.play" % "play-json_2.12" % "2.6.0-M1",
     "com.github.nscala-time" %% "nscala-time" % "2.16.0",
-    "joda-time" % "joda-time" % "2.9.6"
-
+    "joda-time" % "joda-time" % "2.9.6",
+    "de.heikoseeberger" %% "akka-http-play-json" % "1.12.0"
   )
 }
 
