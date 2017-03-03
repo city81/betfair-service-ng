@@ -21,15 +21,24 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
 
   def login(): Future[Option[LoginResponse]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val request = LoginRequest(config.username, config.password)
     command.makeLoginRequest(request)
   }
 
   def keepAlive(sessionToken: String): Future[Option[KeepAliveResponse]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     command.makeKeepAliveRequest(sessionToken)
   }
 
   def logout(sessionToken: String) {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     command.makeLogoutRequest(sessionToken)
   }
 
@@ -44,6 +53,9 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
                         fromRecord: Option[(String, Integer)] = None,
                         recordCount: Option[(String, Integer)] = None): Future[Option[CurrentOrderSummaryReportContainer]] = {
 
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(betIds, marketIds, orderProjection, placedDateRange, dateRange,
       orderBy, sortDir, fromRecord, recordCount).flatten
@@ -56,18 +68,27 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   }
 
   def listEventTypes(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventTypeResultContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEventTypes", params = params)
     command.makeAPIRequest[EventTypeResultContainer](sessionToken, request)
   }
 
   def listEvents(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventResultContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
     command.makeAPIRequest[EventResultContainer](sessionToken, request)
   }
 
   def listCompetitions(sessionToken: String, marketFilter: MarketFilter): Future[Option[CompetitionResultContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listCompetitions", params = params)
     command.makeAPIRequest[CompetitionResultContainer](sessionToken, request)
@@ -75,6 +96,9 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def listMarketCatalogue(sessionToken: String, marketFilter: MarketFilter, marketProjection: List[MarketProjection],
                           sort: MarketSort, maxResults: Integer): Future[Option[ListMarketCatalogueContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val params = HashMap[String, Object]("filter" -> marketFilter, "marketProjection" -> marketProjection,
       "sort" -> sort, "maxResults" -> maxResults)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listMarketCatalogue", params = params)
@@ -86,6 +110,9 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
                      orderProjection: Option[(String, OrderProjection)] = None,
                      matchProjection: Option[(String, MatchProjection)] = None,
                      currencyCode: Option[(String, String)] = None): Future[Option[ListMarketBookContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(priceProjection, orderProjection, matchProjection, currencyCode).flatten
 
@@ -97,6 +124,9 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   }
 
   def placeOrders(sessionToken: String, marketId: String, instructions: Set[PlaceInstruction]): Future[Option[PlaceExecutionReportContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/placeOrders", params = params)
@@ -105,6 +135,8 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def replaceOrders(sessionToken: String, marketId: String, instructions: Set[ReplaceInstruction]):
   Future[Option[ReplaceExecutionReportContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
@@ -115,6 +147,8 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   def cancelOrders(sessionToken: String, marketId: String, instructions: Set[CancelInstruction]):
   Future[Option[CancelExecutionReportContainer]] = {
 
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/cancelOrders", params = params)
@@ -123,6 +157,8 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def updateOrders(sessionToken: String, marketId: String, instructions: Set[UpdateInstruction]):
   Future[Option[UpdateExecutionReportContainer]] = {
+
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
