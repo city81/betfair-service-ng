@@ -1,7 +1,8 @@
 package com.betfair.domain
 
 import org.joda.time.DateTime
-import play.api.libs.json.{Reads, Json}
+import org.joda.time.format.DateTimeFormat
+import play.api.libs.json.{Json, Reads}
 
 case class Runner(selectionId: Long,
                   handicap: Double,
@@ -16,7 +17,14 @@ case class Runner(selectionId: Long,
                   matches: Option[Set[Match]])
 
 object Runner {
+
   val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-  implicit val dateTimeReads = Reads.jodaDateReads(dateFormat)
+
+  implicit val jodaDateReads = Reads[DateTime](js =>
+    js.validate[String].map[DateTime](dtString =>
+      DateTime.parse(dtString, DateTimeFormat.forPattern(dateFormat))
+    )
+  )
+
   implicit val readsRunner = Json.reads[Runner]
 }

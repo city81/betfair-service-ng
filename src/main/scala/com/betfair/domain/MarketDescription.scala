@@ -2,7 +2,7 @@ package com.betfair.domain
 
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json._
 
 case class MarketDescription(persistenceEnabled: Boolean,
                         bspMarket: Boolean,
@@ -21,14 +21,19 @@ case class MarketDescription(persistenceEnabled: Boolean,
                         clarifications: Option[String] = None)
 
 object MarketDescription {
-
   val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 
-  implicit val jodaDateReads = Reads[DateTime](js =>
+  val jodaDateReads = Reads[DateTime](js =>
     js.validate[String].map[DateTime](dtString =>
       DateTime.parse(dtString, DateTimeFormat.forPattern(dateFormat))
     )
   )
+
+  val jodaDateWrites: Writes[DateTime] = new Writes[DateTime] {
+    def writes(d: DateTime): JsValue = JsString(d.toString())
+  }
+
+  implicit val jodaFormat: Format[DateTime] = Format(jodaDateReads, jodaDateWrites)
 
   implicit val readsMarketDescription = Json.format[MarketDescription]
 }
