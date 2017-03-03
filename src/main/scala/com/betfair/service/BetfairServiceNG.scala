@@ -10,7 +10,6 @@ import com.betfair.domain.OrderBy.OrderBy
 import com.betfair.domain.OrderProjection.OrderProjection
 import com.betfair.domain.SortDir.SortDir
 import com.betfair.domain._
-import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 
 import scala.collection.mutable.HashMap
 import scala.concurrent._
@@ -23,24 +22,15 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
 
   def login(): Future[Option[LoginResponse]] = {
-
-    import PlayJsonSupport._
-
     val request = LoginRequest(config.username, config.password)
     command.makeLoginRequest(request)
   }
 
   def keepAlive(sessionToken: String): Future[Option[KeepAliveResponse]] = {
-
-    import PlayJsonSupport._
-
     command.makeKeepAliveRequest(sessionToken)
   }
 
   def logout(sessionToken: String) {
-
-    import PlayJsonSupport._
-
     command.makeLogoutRequest(sessionToken)
   }
 
@@ -55,8 +45,6 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
                         fromRecord: Option[(String, Integer)] = None,
                         recordCount: Option[(String, Integer)] = None): Future[Option[CurrentOrderSummaryReportContainer]] = {
 
-    import PlayJsonSupport._
-
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(betIds, marketIds, orderProjection, placedDateRange, dateRange,
       orderBy, sortDir, fromRecord, recordCount).flatten
@@ -69,27 +57,18 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   }
 
   def listEventTypes(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventTypeResultContainer]] = {
-
-    import PlayJsonSupport._
-
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEventTypes", params = params)
     command.makeAPIRequest[EventTypeResultContainer](sessionToken, request)
   }
 
   def listEvents(sessionToken: String, marketFilter: MarketFilter): Future[Option[EventResultContainer]] = {
-
-    import PlayJsonSupport._
-
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listEvents", params = params)
     command.makeAPIRequest[EventResultContainer](sessionToken, request)
   }
 
   def listCompetitions(sessionToken: String, marketFilter: MarketFilter): Future[Option[CompetitionResultContainer]] = {
-
-    import PlayJsonSupport._
-
     val params = HashMap[String, Object]("filter" -> marketFilter)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listCompetitions", params = params)
     command.makeAPIRequest[CompetitionResultContainer](sessionToken, request)
@@ -97,9 +76,6 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def listMarketCatalogue(sessionToken: String, marketFilter: MarketFilter, marketProjection: List[MarketProjection],
                           sort: MarketSort, maxResults: Integer): Future[Option[ListMarketCatalogueContainer]] = {
-
-    import PlayJsonSupport._
-
     val params = HashMap[String, Object]("filter" -> marketFilter, "marketProjection" -> marketProjection,
       "sort" -> sort, "maxResults" -> maxResults)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listMarketCatalogue", params = params)
@@ -111,9 +87,6 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
                      orderProjection: Option[(String, OrderProjection)] = None,
                      matchProjection: Option[(String, MatchProjection)] = None,
                      currencyCode: Option[(String, String)] = None): Future[Option[ListMarketBookContainer]] = {
-
-    import PlayJsonSupport._
-
     // this simplifies the json serialisation of the Options when in the params HashMap
     val flattenedOpts = Seq(priceProjection, orderProjection, matchProjection, currencyCode).flatten
 
@@ -125,19 +98,23 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
   }
 
   def placeOrders(sessionToken: String, marketId: String, instructions: Set[PlaceInstruction]): Future[Option[PlaceExecutionReportContainer]] = {
-
-    import PlayJsonSupport._
-
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/placeOrders", params = params)
     command.makeAPIRequest[PlaceExecutionReportContainer](sessionToken, request)
   }
 
+  def replaceOrders(sessionToken: String, marketId: String, instructions: Set[ReplaceInstruction]):
+  Future[Option[ReplaceExecutionReportContainer]] = {
+
+    val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
+
+    val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/replaceOrders", params = params)
+    command.makeAPIRequest[ReplaceExecutionReportContainer](sessionToken, request)
+  }
+
   def cancelOrders(sessionToken: String, marketId: String, instructions: Set[CancelInstruction]):
   Future[Option[CancelExecutionReportContainer]] = {
-
-    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
@@ -147,8 +124,6 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
   def updateOrders(sessionToken: String, marketId: String, instructions: Set[UpdateInstruction]):
   Future[Option[UpdateExecutionReportContainer]] = {
-
-    import PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions)
 
@@ -210,6 +185,29 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
       runners.filter(x => (x.status == "ACTIVE" &&
         x.ex.get.availableToBack.head.price >= lowerPrice &&
         x.ex.get.availableToBack.head.price <= higherPrice))
+    }
+
+    val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
+    val priceBoundRunners = listMarketBook(sessionToken, marketIds = Set(marketId),
+      priceProjection = Some(("priceProjection", priceProjection))
+    ).map { response =>
+      response match {
+        case Some(listMarketBookContainer) =>
+          Some(filterRunners(listMarketBookContainer.result(0).runners))
+        case error =>
+          println("error " + error)
+          None
+      }
+    }
+    Await.result(priceBoundRunners, 10 seconds)
+  }
+
+  def getRunner(sessionToken: String, marketId: String, selectionId: Long): Future[Option[Set[Runner]]] = Future {
+
+    def filterRunners(runners: Set[Runner]): Set[Runner] = {
+      if (runners.isEmpty) throw new NoSuchElementException
+      runners.filter(x => (x.status == "ACTIVE" &&
+        x.selectionId == selectionId))
     }
 
     val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))

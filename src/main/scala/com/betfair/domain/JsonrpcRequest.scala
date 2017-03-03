@@ -34,6 +34,7 @@ object JsonrpcRequest {
             // need to get this working with typeTag or classTag
             case market: List[MarketProjection] if market(0).isInstanceOf[MarketProjection] => s -> Json.toJson(a.asInstanceOf[List[MarketProjection]])
             case place: Set[PlaceInstruction] if place.toList(0).isInstanceOf[PlaceInstruction] => s -> Json.toJson(a.asInstanceOf[Set[PlaceInstruction]])
+            case replace: Set[ReplaceInstruction] if replace.toList(0).isInstanceOf[ReplaceInstruction] => s -> Json.toJson(a.asInstanceOf[Set[ReplaceInstruction]])
             case cancel: Set[CancelInstruction] if cancel.toList(0).isInstanceOf[CancelInstruction] => s -> Json.toJson(a.asInstanceOf[Set[CancelInstruction]])
             case string: Set[String] if string.toList(0).isInstanceOf[String] => s -> Json.toJson(a.asInstanceOf[Set[String]])
           }

@@ -3,13 +3,12 @@ package com.betfair.robots.racing
 import akka.actor.{ActorSystem, Props}
 import com.betfair.Configuration
 import RacingRobotSupervisor.Start
-import com.betfair.robots.racing.RacingRobotSupervisor
 import com.betfair.service.{BetfairServiceNG, BetfairServiceNGCommand}
 import com.typesafe.config.ConfigFactory
 
 object RacingRobot extends App {
 
-  // create the systema nd the dispatcher
+  // create the system and the dispatcher
   implicit val system = ActorSystem("racing-robot")
   implicit val executionContext = system.dispatcher
 
@@ -27,7 +26,8 @@ object RacingRobot extends App {
   val betfairServiceNG = new BetfairServiceNG(config, betfairServiceNGCommand)
 
   // create top level actor
-  val racingRobotSupervisor = system.actorOf(Props(new RacingRobotSupervisor(betfairServiceNG)), "racing-robot-supervisor")
+  val racingRobotSupervisor = system.actorOf(Props(new RacingRobotSupervisor(betfairServiceNG)),
+    "racing-robot-supervisor")
 
   racingRobotSupervisor ! Start
 }

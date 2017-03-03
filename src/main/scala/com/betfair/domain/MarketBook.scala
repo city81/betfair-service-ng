@@ -1,6 +1,7 @@
 package com.betfair.domain
 
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import play.api.libs.json.{Json, Reads}
 
 case class MarketBook(marketId: String,
@@ -24,6 +25,12 @@ case class MarketBook(marketId: String,
 object MarketBook {
 
   val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-  implicit val dateTimeReads = Reads.jodaDateReads(dateFormat)
+
+  implicit val jodaDateReads = Reads[DateTime](js =>
+    js.validate[String].map[DateTime](dtString =>
+      DateTime.parse(dtString, DateTimeFormat.forPattern(dateFormat))
+    )
+  )
+
   implicit val readsMarketBook = Json.reads[MarketBook]
 }

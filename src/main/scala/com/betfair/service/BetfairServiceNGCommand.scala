@@ -9,13 +9,29 @@ import akka.http.scaladsl.unmarshalling.{FromResponseUnmarshaller, Unmarshal}
 import akka.stream.ActorMaterializer
 import com.betfair.Configuration
 import com.betfair.domain._
-import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport
 
 import scala.concurrent._
 import scala.language.postfixOps
 
 class BetfairServiceNGCommand(val config: Configuration)
                              (implicit executionContext: ExecutionContext, system: ActorSystem) {
+
+
+  private def checkStatusCodeAndUnmarshal[T](implicit unmarshaller: FromResponseUnmarshaller[T]): Future[HttpResponse] => Future[Option[T]] =
+    (futRes: Future[HttpResponse]) => futRes.map {
+      res =>
+        if (res.status == StatusCodes.OK) {
+          try {
+            Some(unmarshal[T](unmarshaller)(res))
+          } catch {
+            case e: Exception => {
+              println(res)
+              println(e.getMessage)
+              None
+            }
+          }
+        } else None
+    }
 
   def makeLoginRequest(request: LoginRequest)(implicit unmarshaller: FromResponseUnmarshaller[LoginResponse]): Future[Option[LoginResponse]] = {
 
@@ -83,6 +99,20 @@ class BetfairServiceNGCommand(val config: Configuration)
       POST,
       uri = config.isoUrl + "/logout",
       headers = headers.toList))
+
+  }
+
+  def makeKeepAliveRequest(sessionToken: String)(implicit unmarshaller: FromResponseUnmarshaller[KeepAliveResponse]): Future[Option[KeepAliveResponse]] = {
+
+    val pipeline =
+      addHeader("Accept", "application/json") ~>
+        addHeader("X-Application", config.appKey) ~>
+        addHeader("X-Authentication", sessionToken) ~>
+        sendReceive ~> checkStatusCodeAndUnmarshal[KeepAliveResponse]
+
+    pipeline {
+      Post(config.isoUrl + "/keepAlive")
+    }
 
   }
 

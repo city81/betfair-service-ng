@@ -4,7 +4,7 @@ organization := "betfair"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.2"
+scalaVersion := "2.12.1"
 
 scalacOptions := Seq(
   "-deprecation",
@@ -13,10 +13,6 @@ scalacOptions := Seq(
   "-Xlint",
   "-language:reflectiveCalls",
   "-Xmax-classfile-name", "128"
-)
-
-resolvers ++= Seq(
-  "spray repo" at "http://repo.spray.io/"
 )
 
 // sbt-Revolver allows the running of the spray service in sbt in the background using re-start
@@ -32,32 +28,20 @@ assemblyExcludedJars in assembly <<= (fullClasspath in assembly) map { cp =>
 }
 
 libraryDependencies ++= {
-  val akkaV = "2.3.6"
-  val sprayV = "1.3.2"
   Seq(
     "com.github.tomakehurst" % "wiremock" % "1.46" % "test",
-//        "io.spray" % "spray-can_2.11" % sprayV,
-//        "io.spray" % "spray-caching_2.11" % sprayV,
-    "com.typesafe.akka" %% "akka-slf4j" % akkaV,
-//        "io.spray" % "spray-client_2.11" % sprayV,
-//        "io.spray" % "spray-routing_2.11" % sprayV,
-//        "io.spray" % "spray-testkit_2.11" % sprayV,
-//        "io.spray" %% "spray-json" % "1.3.1",
-    "com.typesafe.akka" %% "akka-actor" % akkaV,
+    "com.typesafe.akka" % "akka-slf4j_2.12" % "2.4.17",
+    "com.typesafe.akka" % "akka-http_2.12" % "10.0.0",
     "ch.qos.logback" % "logback-classic" % "1.1.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.1" % "provided",
     "org.mockito" % "mockito-all" % "1.9.5" % "provided",
     "org.mockito" % "mockito-core" % "1.9.5" % "provided",
-    "com.github.nscala-time" %% "nscala-time" % "1.4.0",
-//    "com.typesafe.play" %% "play-json" % "2.4.0-M1",
+    "com.github.nscala-time" %% "nscala-time" % "2.16.0",
     "org.apache.httpcomponents" % "httpclient" % "4.3.6",
-    "org.scalamock" %% "scalamock-scalatest-support" % "3.2.1" % "provided",
     "org.codehaus.plexus" % "plexus-utils" % "1.5.7",
-    "com.typesafe.akka" % "akka-stream-experimental_2.11" % "2.0",
-    "com.typesafe.akka" % "akka-http-core-experimental_2.11" % "2.0",
-    "com.typesafe.akka" % "akka-http-experimental_2.11" % "2.0",
-    "com.typesafe.akka" % "akka-http-testkit-experimental_2.11" % "2.0",
-    "de.heikoseeberger" % "akka-http-play-json_2.11" % "1.4.0"
+    "com.typesafe.play" % "play-json_2.12" % "2.6.0-M1",
+    "com.github.nscala-time" %% "nscala-time" % "2.16.0"
+
   )
 }
 

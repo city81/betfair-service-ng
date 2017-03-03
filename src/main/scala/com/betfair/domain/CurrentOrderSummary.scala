@@ -5,7 +5,8 @@ import com.betfair.domain.OrderType.OrderType
 import com.betfair.domain.PersistenceType.PersistenceType
 import com.betfair.domain.Side.Side
 import org.joda.time.DateTime
-import play.api.libs.json.{Reads, Json}
+import org.joda.time.format.DateTimeFormat
+import play.api.libs.json.{Json, Reads}
 
 case class CurrentOrderSummary(betId: String, marketId: String, selectionId: Long, handicap: Double,
                                priceSize: PriceSize, bspLiability: Double, side: Side,
@@ -17,7 +18,14 @@ case class CurrentOrderSummary(betId: String, marketId: String, selectionId: Lon
                                regulatorCode: String)
 
 object CurrentOrderSummary {
+
   val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-  implicit val dateTimeReads = Reads.jodaDateReads(dateFormat)
+
+  implicit val jodaDateReads = Reads[DateTime](js =>
+    js.validate[String].map[DateTime](dtString =>
+      DateTime.parse(dtString, DateTimeFormat.forPattern(dateFormat))
+    )
+  )
+
   implicit val readsCurrentOrderSummary = Json.reads[CurrentOrderSummary]
 }
