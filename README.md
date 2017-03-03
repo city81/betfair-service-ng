@@ -38,14 +38,12 @@ BSD Licence - see LICENCE.txt
 TODO
 ----
 
-1. Add the remaining betting api calls
-2. Add more convenience methods to the service API eg get all runners between two prices
-3. Add a Spray REST API to the whole service
-4. Repackage the domain classes
-5. Push the local tests to master
-6. Make this README more complete!
+1. Update example robot (MonitorInPlayFav) and removed redundant code
+2. Get akka-http branch working and merge into master
+3. Add the remaining betting api calls
+4. Add more convenience methods to the service API eg get all runners between two prices
+5. Make this README more complete!
 
 [scala]: http://www.scala-lang.org/ "Scala Language"
-[spray]: http://spray.io/ "Spray"
 [play]: https://www.playframework.com/documentation/2.0/ScalaJson
 [betfair]: https://developer.betfair.com/

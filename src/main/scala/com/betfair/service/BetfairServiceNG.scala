@@ -235,4 +235,27 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     Await.result(priceBoundRunners, 10 seconds)
   }
 
+  def getRunner(sessionToken: String, marketId: String, selectionId: Long): Future[Option[Set[Runner]]] = Future {
+
+    def filterRunners(runners: Set[Runner]): Set[Runner] = {
+      if (runners.isEmpty) throw new NoSuchElementException
+      runners.filter(x => (x.status == "ACTIVE" &&
+        x.selectionId == selectionId))
+    }
+
+    val priceProjection = PriceProjection(priceData = Set(PriceData.EX_BEST_OFFERS))
+    val priceBoundRunners = listMarketBook(sessionToken, marketIds = Set(marketId),
+      priceProjection = Some(("priceProjection", priceProjection))
+    ).map { response =>
+      response match {
+        case Some(listMarketBookContainer) =>
+          Some(filterRunners(listMarketBookContainer.result(0).runners))
+        case error =>
+          println("error " + error)
+          None
+      }
+    }
+    Await.result(priceBoundRunners, 10 seconds)
+  }
+
 }
