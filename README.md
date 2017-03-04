@@ -38,11 +38,8 @@ BSD Licence - see LICENCE.txt
 TODO
 ----
 
-1. Update example robot (MonitorInPlayFav) and removed redundant code
-2. Get akka-http branch working and merge into master
-3. Add the remaining betting api calls
-4. Add more convenience methods to the service API eg get all runners between two prices
-5. Make this README more complete!
+1. Add the remaining betting api calls
+2. Add more convenience methods to the service API
 
 [scala]: http://www.scala-lang.org/ "Scala Language"
 [play]: https://www.playframework.com/documentation/2.0/ScalaJson
