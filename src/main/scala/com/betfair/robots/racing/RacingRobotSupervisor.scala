@@ -1,7 +1,6 @@
 package com.betfair.robots.racing
 
 import akka.actor._
-import com.betfair.robots.football.MarketMonitor
 import com.betfair.service.{BetfairServiceNG, BetfairServiceNGException}
 import org.joda.time
 import org.joda.time.DateTimeZone
