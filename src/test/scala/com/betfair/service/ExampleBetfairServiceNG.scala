@@ -154,12 +154,8 @@ object ExampleBetfairServiceNG extends App {
     }
 
     // place a bet
-<<<<<<< HEAD
-    val placeInstructions = Set(PlaceInstruction(orderType = OrderType.LIMIT, selectionId = 56343, side = Side.BACK,
-=======
     val placeInstructions = Set(PlaceInstruction(orderType = OrderType.LIMIT, selectionId = 56343,
       handicap = Some(0.0), side = Side.BACK,
->>>>>>> master
       limitOrder = Some(LimitOrder(size = 2.0, price = 3.5, persistenceType = PersistenceType.PERSIST))))
     betfairServiceNG.placeOrders(sessionToken, marketId = "1.116586576", instructions = placeInstructions
     ) onComplete {

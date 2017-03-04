@@ -7,14 +7,13 @@ import com.betfair.domain._
 import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent._
-import org.scalatest.{FlatSpec, ShouldMatchers}
+import org.scalatest.{FlatSpec, MustMatchers}
 
 import scala.collection.mutable
 import scala.concurrent.Future
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class BetfairServiceNGSpec extends FlatSpec with ShouldMatchers with MockFactory with ScalaFutures {
+class BetfairServiceNGSpec extends FlatSpec with MustMatchers with MockFactory with ScalaFutures {
 
   implicit val system = ActorSystem("on-spray-can")
 
@@ -51,9 +50,9 @@ class BetfairServiceNGSpec extends FlatSpec with ShouldMatchers with MockFactory
     whenReady(result) { res =>
       res match {
         case Some(container) =>
-          container.result.size should be(1)
-          container.result(0).marketCount should be(1)
-          container.result(0).event.id should be(eventTypeId)
+          container.result.size must be(1)
+          container.result(0).marketCount must be(1)
+          container.result(0).event.id must be(eventTypeId)
         case _ =>
           fail()
       }
