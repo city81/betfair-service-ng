@@ -46,3 +46,6 @@ betfair-service-ng.conf
 /src/main/scala/com/betfair/robots/football/missing/*
 /src/main/scala/com/betfair/robots/racing/MarketMonitorWin.scala
 /src/main/scala/com/betfair/robots/racing/MonitorInPlayWin.scala
+!/src/main/scala/com/betfair/robots/football/FootballProcessor.scala
+!/src/main/scala/com/betfair/robots/football/PreEventSelectionData.scala
+!/src/main/scala/com/betfair/robots/football/InPlaySelectionData.scala
