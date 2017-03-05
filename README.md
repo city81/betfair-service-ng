@@ -29,6 +29,11 @@ The ExampleBetfairServiceNG file contains the below sample calls:
     cancel a bet
 
 
+Project also includes a FootballProcessor file which parses Betfair historical files. 
+This file can be changed to extract different data. The example extracts Premier League Match Odds records
+and outputs the 'at the off' odds and the longest odds matched in running.
+
+
 LICENCE
 -------
 
