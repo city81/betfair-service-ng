@@ -3,7 +3,7 @@ Betfair Service NG
 
 [![Master Build](https://travis-ci.org/city81/betfair-service-ng.svg?branch=master)](https://travis-ci.org/city81/betfair-service-ng)
 
-This is a project which uses [Scala][scala], [Akka-HTTP][akka-http] and the [Play][play] JSON lib to make calls to [Betfair's][betfair] New Generation API ie JSON-RPC
+This is a project which uses [Scala][scala], [Akka HTTP][akka-http] and the [Play][play] JSON lib to make calls to [Betfair's][betfair] New Generation API ie JSON-RPC
 
 To use the service, you'll need a Betfair username and password, and an AppKey. The config file also contains the betfair urls. These need to be placed in a file called betfair-service-ng.conf which is referenced by the application.conf file. Example configuration is below:
 
@@ -32,6 +32,14 @@ The ExampleBetfairServiceNG file contains the below sample calls:
 Project also includes a FootballProcessor file which parses Betfair historical files. 
 This file can be changed to extract different data. The example extracts Premier League Match Odds records
 and outputs the 'at the off' odds and the longest odds matched in running.
+
+
+SPRAY replaced by Akka-HTTP
+---------------------------
+
+The latest version of this project has been updated to use Akka HTTP instead of Spray. Whereas Spray had an actor based interface, Akka HTTP has an API based on Akka Streams making the development of HTTP applications simpler. Also with the bounded memory guarantee of Akka Streams you can serve HTTP results without increased resource usage.
+
+For the previous version, checkout the Spray tag
 
 
 LICENCE
