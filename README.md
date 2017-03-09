@@ -34,7 +34,7 @@ This file can be changed to extract different data. The example extracts Premier
 and outputs the 'at the off' odds and the longest odds matched in running.
 
 
-SPRAY replaced by Akka-HTTP
+Spray replaced by Akka-HTTP
 ---------------------------
 
 The latest version of this project has been updated to use Akka HTTP instead of Spray. Whereas Spray had an actor based interface, Akka HTTP has an API based on Akka Streams making the development of HTTP applications simpler. Also with the bounded memory guarantee of Akka Streams you can serve HTTP results without increased resource usage.
