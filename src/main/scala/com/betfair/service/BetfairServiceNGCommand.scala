@@ -16,23 +16,6 @@ import scala.language.postfixOps
 class BetfairServiceNGCommand(val config: Configuration)
                              (implicit executionContext: ExecutionContext, system: ActorSystem) {
 
-//
-//  private def checkStatusCodeAndUnmarshal[T](implicit unmarshaller: FromResponseUnmarshaller[T]): Future[HttpResponse] => Future[Option[T]] =
-//    (futRes: Future[HttpResponse]) => futRes.map {
-//      res =>
-//        if (res.status == StatusCodes.OK) {
-//          try {
-//            Some(unmarshal[T](unmarshaller)(res))
-//          } catch {
-//            case e: Exception => {
-//              println(res)
-//              println(e.getMessage)
-//              None
-//            }
-//          }
-//        } else None
-//    }
-
   def makeLoginRequest(request: LoginRequest)(implicit unmarshaller: FromResponseUnmarshaller[LoginResponse]): Future[Option[LoginResponse]] = {
 
     import HttpCharsets._

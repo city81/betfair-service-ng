@@ -71,6 +71,11 @@ class MonitorInPlayFav(betfairServiceNG: BetfairServiceNG, sessionToken: String,
 
               runners foreach { runner =>
 
+
+
+
+
+
                   // betting logic here
                   if (true) {
 
