@@ -44,76 +44,26 @@ class MarketMonitorFav(betfairServiceNG: BetfairServiceNG) extends Actor {
                 // create the race actor if not already running
                 var raceActorName = "monitor-fav-" + marketCatalogue.marketId
 
-//                if (child(raceActorName).isEmpty) {
-//
-//                  println(marketCatalogue.marketStartTime.get + " " + raceActorName)
-//
-//                  val millisecondsBeforeMonitoring =
+                if (child(raceActorName).isEmpty && !marketCatalogue.marketName.contains("PA")) {
+
+                  println(marketCatalogue.marketStartTime.get + " " + raceActorName)
+
+                  val millisecondsBeforeMonitoring = 0
 //                    marketCatalogue.marketStartTime.get.getMillis -
 //                      (new time.DateTime(DateTimeZone.UTC)).getMillis
-//
-//                  try {
-//                    system.scheduler.scheduleOnce(
-//                      Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-//                      system.actorOf(Props(new MonitorInPlayWinScalp(betfairServiceNG, sessionToken,
-//                        marketCatalogue.marketId, marketCatalogue.marketStartTime)),
-//                        raceActorName), "")
-//                  } catch {
-//                    case e: Exception =>
-//                      println(marketCatalogue.marketStartTime.get + " " + raceActorName + " - already created")
-//                  }
-//                }
 
-                if (marketCatalogue.marketName.contains("Hcap") || marketCatalogue.marketName.contains("Nursery")) {
-                  raceActorName = raceActorName + "-Hcap"
-                } else {
-                  raceActorName = raceActorName + "-NonHcap"
-                }
-
-                if (!marketCatalogue.marketName.contains("PA")) {
-
-                  if (child(raceActorName).isEmpty &&
-                    (marketCatalogue.marketName.contains("Hcap") || marketCatalogue.marketName.contains("Nursery"))) {
-
-                    println(marketCatalogue.marketStartTime.get + " " + raceActorName)
-
-                    val millisecondsBeforeMonitoring =
-                      marketCatalogue.marketStartTime.get.getMillis -
-                        (new time.DateTime(DateTimeZone.UTC)).getMillis
-
-                    try {
-                      system.scheduler.scheduleOnce(
-                        Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-                        system.actorOf(Props(new MonitorInPlayWinHcap(betfairServiceNG, sessionToken,
-                          marketCatalogue.marketId, marketCatalogue.marketStartTime)),
-                          raceActorName), "")
-                    } catch {
-                      case e: Exception =>
-                        println(marketCatalogue.marketStartTime.get + " " + raceActorName + " - already created")
-                    }
-                  } else if (child(raceActorName).isEmpty &&
-                    (!marketCatalogue.marketName.contains("Hcap") && !marketCatalogue.marketName.contains("Nursery"))) {
-
-                    println(marketCatalogue.marketStartTime.get + " " + raceActorName)
-
-                    val millisecondsBeforeMonitoring =
-                      marketCatalogue.marketStartTime.get.getMillis -
-                        (new time.DateTime(DateTimeZone.UTC)).getMillis
-
-                    try {
-                      system.scheduler.scheduleOnce(
-                        Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-                        system.actorOf(Props(new MonitorInPlayWinNonHcap(betfairServiceNG, sessionToken,
-                          marketCatalogue.marketId, marketCatalogue.marketStartTime)),
-                          raceActorName), "")
-                    } catch {
-                      case e: Exception =>
-                        println(marketCatalogue.marketStartTime.get + " " + raceActorName + " - already created")
-                    }
+                  try {
+                    system.scheduler.scheduleOnce(
+                      Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
+                      system.actorOf(Props(new MonitorInPlayLay(betfairServiceNG, sessionToken,
+                        marketCatalogue.marketId, marketCatalogue.marketStartTime)),
+                        raceActorName), "")
+                  } catch {
+                    case e: Exception =>
+                      println(marketCatalogue.marketStartTime.get + " " + raceActorName + " - already created")
                   }
 
                 }
-
 
               }
             case Success(None) =>
