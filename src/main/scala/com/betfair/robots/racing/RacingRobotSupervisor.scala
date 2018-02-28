@@ -21,7 +21,7 @@ class RacingRobotSupervisor(betfairServiceNG: BetfairServiceNG) extends Actor {
       betfairServiceNG.login.map {
         case Some(loginResponse) =>
           println((new time.DateTime(DateTimeZone.UTC)) + " logged in")
-          system.scheduler.schedule(0 seconds, 3 hours, marketMonitorFavActor, MarketMonitorFav.StartMonitoring(loginResponse.token))
+          system.scheduler.schedule(0 seconds, 2 hours, marketMonitorFavActor, MarketMonitorFav.StartMonitoring(loginResponse.token))
         case _ => throw new BetfairServiceNGException("no session token")
       }
   }

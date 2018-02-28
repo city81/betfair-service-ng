@@ -1,7 +1,7 @@
 package com.betfair.robots.racing
 
 import akka.actor.Actor
-import com.betfair.domain.{LimitOrder, PersistenceType, PlaceInstruction, Side}
+import com.betfair.domain._
 import com.betfair.service.BetfairServiceNG
 import org.joda.time
 import org.joda.time.{DateTime, DateTimeZone}
@@ -9,6 +9,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import scala.math.BigDecimal.RoundingMode
 import scala.util.{Failure, Success}
 
 class MonitorInPlayLay(betfairServiceNG: BetfairServiceNG, sessionToken: String,
@@ -20,176 +21,212 @@ class MonitorInPlayLay(betfairServiceNG: BetfairServiceNG, sessionToken: String,
 
     case _ => {
 
-      println((new time.DateTime(DateTimeZone.UTC)) + " - monitoring in play starting - " + marketId)
+      var sum = 0.0
 
       var preRace = true
 
       // monitor market until the off
       while (preRace) {
-        betfairServiceNG.getPriceBoundRunners(sessionToken, marketId = marketId,
-          lowerPrice = 1.00, higherPrice = 1000.0
-        ) onComplete {
-          case Success(Some(listMarketBookContainer)) =>
-            for (marketBook <- listMarketBookContainer.result) {
 
-              if (marketBook.status.equals("OPEN") && marketBook.betDelay.equals(0)) {
+        try {
 
-                val orderedRunners =
-                  marketBook.runners.filter(r => r.status == "ACTIVE").toSeq.sortBy(_.lastPriceTraded)
+          // calculate the book
+          betfairServiceNG.getPriceBoundRunners(sessionToken, marketId = marketId,
+            lowerPrice = 1.00, higherPrice = 1000.0) onComplete {
+            case Success(Some(runners)) =>
 
-                val sum = marketBook.runners.filter(x => x.ex.get.availableToBack.nonEmpty).map(x => 1.0 / x.ex.get.availableToBack.head.price).sum
+              if (!runners.isEmpty) {
 
-                if (sum > 1.03) {
-                  println("big over round)")
+                sum = 0.0
+
+                runners foreach { runner =>
+                  //                  println(marketId + " " + runner.ex.get.availableToBack.head.price)
+                  sum = sum + (1.0 / runner.ex.get.availableToBack.head.price)
                 }
 
-                println(new time.DateTime(DateTimeZone.UTC) + " - OPEN PRE RACE - "
-                  + marketId + " - market delay - " + marketBook.betDelay)
+                println(marketId + " book: " + BigDecimal(sum).setScale(2, RoundingMode.HALF_UP))
 
-              } else {
+                if (sum > 1.05) {
 
-                preRace = false
+                  println(marketId + " book: " + BigDecimal(sum).setScale(2, RoundingMode.HALF_UP) + " big over round")
 
-              }
-            }
-          case Success(None) =>
-            println("error no result returned")
-          case Failure(error) =>
-            println("error " + error)
-        }
+                  //                  runners foreach { runner =>
+                  //                    println(runner.ex.get.availableToBack.head.price)
+                  //                  }
 
-        Thread.sleep(150)
+                  val orderedRunners = runners.toList.sortWith(_.ex.get.availableToBack.head.price < _.ex.get.availableToBack.head.price)
 
-      }
+                  val favSelectionId = orderedRunners.head.selectionId
 
-      var inPlay = true
+                  val favLayOdds = incrementPrice(orderedRunners.head.ex.get.availableToBack.head.price)
 
-      var suspended = true
+                  if ((favLayOdds >= 2.0) && (favLayOdds <= 5.0)) {
 
-      // monitor market until no longer suspended
-      while (suspended) {
+                    val favLayStake = BigDecimal(12.0 / favLayOdds).setScale(2, RoundingMode.HALF_UP).toDouble
 
-        betfairServiceNG.listMarketBook(sessionToken, marketIds = Set(marketId)
-        ) onComplete {
-          case Success(Some(listMarketBookContainer)) =>
-            for (marketBook <- listMarketBookContainer.result) {
-              if (marketBook.status.equals("OPEN")) {
-                suspended = false
-                println(new time.DateTime(DateTimeZone.UTC) + " - OPEN - "
-                  + marketId + " - market delay - " + marketBook.betDelay)
-                if (marketBook.betDelay.equals(0)) {
-                  println(new time.DateTime(DateTimeZone.UTC) + " - NON RUNNER - "
-                    + marketId + " - market delay - " + marketBook.betDelay)
-                  inPlay = false
+                    var favBackOdds = favLayOdds
+                    while (((1.0 / favLayOdds) - (1.0 / favBackOdds)) < 0.01) {
+                      favBackOdds = incrementPrice(favBackOdds)
+                    }
+                    favBackOdds = decrementPrice(favBackOdds)
+                    val favBackStake = BigDecimal((favLayOdds / favBackOdds) * favLayStake).setScale(2, RoundingMode.HALF_UP).toDouble
+
+                    // place lay bet
+                    //                    println(favSelectionId)
+                    //                    println(favLayOdds)
+                    //                    println(favLayStake)
+                    //                    println(favBackOdds)
+                    //                    println(favBackStake)
+
+                    var placeInstructionsFav = Set(
+                      PlaceInstruction(
+                        selectionId = favSelectionId,
+                        side = Side.LAY,
+                        limitOrder = Some(LimitOrder(size = favLayStake,
+                          price = favLayOdds,
+                          persistenceType = PersistenceType.PERSIST))))
+
+                    var placeOrders = betfairServiceNG.placeOrders(sessionToken,
+                      marketId = marketId,
+                      instructions = placeInstructionsFav
+                    ) map { response =>
+                      response match {
+                        case Some(report) =>
+                          println(new time.DateTime(DateTimeZone.UTC) + " - " + marketId + " - " + favSelectionId + " - lay fav")
+                        case _ =>
+                          println("error no result returned")
+                      }
+                    }
+                    Await.result(placeOrders, 10 seconds)
+
+
+                    // wait until it is matched
+                    var unmatched = true
+
+                    while (unmatched) {
+
+                      Thread.sleep(2000)
+
+                      val currentOrders = betfairServiceNG.listCurrentOrders(sessionToken,
+                        marketIds = Some(("marketIds" -> Set(marketId)))
+                      ) map { response =>
+                        response match {
+                          case Some(report) =>
+
+                            // check all bet size remaining
+                            var sizeRemaining = 0.0
+                            report.result.currentOrders foreach { order =>
+                              sizeRemaining = sizeRemaining + order.sizeRemaining
+                            }
+                            if (sizeRemaining == 0) {
+                              unmatched = false
+                              println(new time.DateTime(DateTimeZone.UTC) + " - " + marketId + " - " + favSelectionId + " - lay fav matched")
+                            }
+                          case _ =>
+                            println("error no result returned")
+                        }
+                      }
+                      Await.result(currentOrders, 10 seconds)
+
+                    }
+
+                    Thread.sleep(1000)
+
+                    // place back bet
+                    placeInstructionsFav = Set(
+                      PlaceInstruction(
+                        selectionId = favSelectionId,
+                        side = Side.BACK,
+                        limitOrder = Some(LimitOrder(size = favBackStake.toDouble,
+                          price = favBackOdds,
+                          persistenceType = PersistenceType.PERSIST))))
+
+                    placeOrders = betfairServiceNG.placeOrders(sessionToken,
+                      marketId = marketId,
+                      instructions = placeInstructionsFav
+                    ) map { response =>
+                      response match {
+                        case Some(report) =>
+                          println(new time.DateTime(DateTimeZone.UTC) + " - " + marketId + " - " + favSelectionId + " - back fav")
+                        case _ =>
+                          println("error no result returned")
+                      }
+                    }
+                    Await.result(placeOrders, 10 seconds)
+
+
+                    // wait until it is matched
+                    unmatched = true
+
+                    while (unmatched) {
+
+                      Thread.sleep(2000)
+
+                      val currentOrders = betfairServiceNG.listCurrentOrders(sessionToken,
+                        marketIds = Some(("marketIds" -> Set(marketId)))
+                      ) map { response =>
+                        response match {
+                          case Some(report) =>
+                            // check all bet size remaining
+                            var sizeRemaining = 0.0
+                            report.result.currentOrders foreach { order =>
+                              sizeRemaining = sizeRemaining + order.sizeRemaining
+                            }
+                            if (sizeRemaining == 0) {
+                              unmatched = false
+                              println(new time.DateTime(DateTimeZone.UTC) + " - " + marketId + " - " + favSelectionId + " - back fav matched")
+                            }
+                          case _ =>
+                            println("error no result returned")
+                        }
+                      }
+                      Await.result(currentOrders, 10 seconds)
+
+                    }
+
+                  }
+
                 }
-              } else {
-                println(new time.DateTime(DateTimeZone.UTC) + " - SUSPENDED - "
-                  + marketId + " - market delay - " + marketBook.betDelay)
-              }
-            }
-          case Success(None) =>
-            println("error no result returned")
-          case Failure(error) =>
-            println("error " + error)
-        }
 
-        Thread.sleep(75)
-
-      }
-
-      Thread.sleep(500)
-
-      var count = 1
-
-      while (inPlay) {
-
-        val priceBoundRunners = betfairServiceNG.getPriceBoundRunners(sessionToken, marketId = marketId,
-          lowerPrice = 1.00, higherPrice = 1000.0
-        ) map { response =>
-          response match {
-            case Some(runners) =>
-
-              if (runners.isEmpty) {
-
-                inPlay = false
-
-              } else {
-
-//                runners.filter(x => x.ex.get.availableToBack.nonEmpty).filter(x => x.ex.get.availableToLay.nonEmpty) foreach (x => println(marketId + "-->" + count + "-->" + x.selectionId + "-->" + x.ex.get.availableToBack.head.price + "-->" + x.ex.get.availableToLay.head.price))
-//
-//                if (runners.filter(x => x.ex.get.availableToLay.nonEmpty).filter(x => x.ex.get.availableToLay.head.price < 2.0).size >= 2) println("***** lay 2")
-//                if (runners.filter(x => x.ex.get.availableToLay.nonEmpty).filter(x => x.ex.get.availableToLay.head.price < 3.0).size >= 3) println("***** lay 3")
-//                if (runners.filter(x => x.ex.get.availableToLay.nonEmpty).filter(x => x.ex.get.availableToLay.head.price < 4.0).size >= 4) println("***** lay 4")
-//                if (runners.filter(x => x.ex.get.availableToLay.nonEmpty).filter(x => x.ex.get.availableToLay.head.price < 5.0).size >= 5) println("***** lay 5")
-//
-//                val sum = runners.filter(x => x.ex.get.availableToBack.nonEmpty).map(x => 1.0 / x.ex.get.availableToBack.head.price).sum
-//                println(sum)
-//
-//                if (sum < 1.00) {
-//                  println("***** under round - prices will shorten")
-//                  if (sum < 0.9) {
-//
-//                    val orderedRunners =
-//                      runners.toSeq.sortBy(_.ex.get.availableToBack.head.price)
-//
-//                    val favOdds = orderedRunners.head.ex.get.availableToBack.head.price
-//
-//                    if ((favOdds > 2.00) && (favOdds < 6.00)) {
-//                      val favSelectionId = orderedRunners.head.selectionId
-//                      val layOdds = decrementPrice(decrementPrice(favOdds))
-//
-//                      val placeInstructionsFav = Set(
-//                        PlaceInstruction(
-//                          selectionId = favSelectionId,
-//                          side = Side.BACK,
-//                          limitOrder = Some(LimitOrder(size = 2.00,
-//                            price = favOdds,
-//                            persistenceType = PersistenceType.PERSIST))),
-//                        PlaceInstruction(
-//                          selectionId = favSelectionId,
-//                          side = Side.LAY,
-//                          limitOrder = Some(LimitOrder(size = BigDecimal(2.00 * (favOdds / layOdds)).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble,
-//                            price = layOdds,
-//                            persistenceType = PersistenceType.PERSIST)))
-//                      )
-//
-//                      betfairServiceNG.placeOrders(sessionToken,
-//                        marketId = marketId,
-//                        instructions = placeInstructionsFav) onComplete {
-//                        case Success(Some(placeExecutionReportContainer)) =>
-//                          println(new time.DateTime(DateTimeZone.UTC) + " - " + marketId + " - " + favSelectionId + " - bet fav win in play")
-//                        case _ =>
-//                          println("error no result returned")
-//                      }
-//
-//                    }
-//                    println("***** bet opportunity")
-//                  }
-//                } else if (sum > 1.25) {
-//                  println("***** big over round - prices will drift")
-//                  if (runners.filter(x => x.ex.get.availableToBack.nonEmpty).filter(x => x.ex.get.availableToBack.head.price <= 6.0).filter(x => x.ex.get.availableToBack.head.price >= 2.0).size >= 2) {
-//                    println("***** bet opportunity")
-//                  }
-//                }
-//
-//                count = count + 1
               }
 
-            case _ =>
+            case Success(None)
+            =>
               println("error no result returned")
-              inPlay = false
+            case Failure(error)
+            =>
+              println("error " + error)
 
           }
 
-        }
+          if (sum > 1.05) {
+            Thread.sleep(5000)
+          } else if (sum > 1.04) {
+            Thread.sleep(10000)
+          } else if (sum > 1.03) {
+            Thread.sleep(15000)
+          } else if (sum > 1.02) {
+            Thread.sleep(20000)
+          } else if (sum > 1.01) {
+            Thread.sleep(25000)
+          } else {
+            Thread.sleep(30000)
+          }
 
-        Await.result(priceBoundRunners, 10 seconds)
-        Thread.sleep(150)
+          if ((marketStartTime.get.getMillis - 600000 - (new time.DateTime(DateTimeZone.UTC)).getMillis) < 0) {
+            preRace = false
+          }
+
+
+        } catch {
+          case _: Throwable => println("Got some other kind of exception")
+        } finally {
+
+        }
 
       }
 
-      println((new time.DateTime(DateTimeZone.UTC)) + " - monitoring in play ending - " + marketId)
-
+      println(marketId + " monitoring over ten before off")
 
     }
 

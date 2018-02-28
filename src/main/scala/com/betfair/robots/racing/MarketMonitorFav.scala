@@ -16,6 +16,11 @@ class MarketMonitorFav(betfairServiceNG: BetfairServiceNG) extends Actor {
   import MarketMonitorFav._
   import context._
 
+  val eventList = Array("7f Mdn Stks", "2m Juv Hrd", "1m7f Nov Hrd", "2m Nov Chs", "1m7f Hcap Hrd",
+    "2m4f Nov Hrd", "2m6f Hcap Chs", "5f Hcap", "2m3f Nov Hrd", "3m Nov Hcap Chs", "2m Hcap", "5f Nov Stks",
+    "7f Hcap", "2m4f Hcap Chs", "2m Nov Hrd", "2m Stks NHF", "1m1f Hcap", "7f Nov Stks", "6f Stks")
+
+
   def receive = {
 
     case StartMonitoring(sessionToken) =>
@@ -44,18 +49,19 @@ class MarketMonitorFav(betfairServiceNG: BetfairServiceNG) extends Actor {
                 // create the race actor if not already running
                 var raceActorName = "monitor-fav-" + marketCatalogue.marketId
 
-                if (child(raceActorName).isEmpty && !marketCatalogue.marketName.contains("PA")) {
+                if (child(raceActorName).isEmpty
+                  && eventList.contains(marketCatalogue.marketName)) {
 
                   println(marketCatalogue.marketStartTime.get + " " + raceActorName)
 
-                  val millisecondsBeforeMonitoring = 0
-//                    marketCatalogue.marketStartTime.get.getMillis -
-//                      (new time.DateTime(DateTimeZone.UTC)).getMillis
+                  val millisecondsBeforeMonitoring =
+                    marketCatalogue.marketStartTime.get.getMillis -
+                      (new time.DateTime(DateTimeZone.UTC)).getMillis
 
                   try {
                     system.scheduler.scheduleOnce(
                       Duration(millisecondsBeforeMonitoring, TimeUnit.MILLISECONDS),
-                      system.actorOf(Props(new MonitorInPlayLay(betfairServiceNG, sessionToken,
+                      system.actorOf(Props(new MonitorInPlayFav(betfairServiceNG, sessionToken,
                         marketCatalogue.marketId, marketCatalogue.marketStartTime)),
                         raceActorName), "")
                   } catch {

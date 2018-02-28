@@ -8,7 +8,7 @@ import play.api.libs.json._
 case class MarketFilter(textQuery: Option[String] = None,
                         exchangeIds: Set[Int] = Set.empty,
                         eventTypeIds: Set[Int] = Set.empty,
-                        marketIds: Set[Int] = Set.empty,
+                        marketIds: Set[String] = Set.empty,
                         inPlayOnly: Option[Boolean] = None,
                         eventIds: Set[Int] = Set.empty,
                         competitionIds: Set[Int] = Set.empty,
