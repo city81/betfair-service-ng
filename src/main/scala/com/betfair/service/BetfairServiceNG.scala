@@ -110,7 +110,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
     val params = HashMap[String, Object]("marketId" -> marketId, "instructions" -> instructions,
-      "async" -> "true")
+      "async" -> "false")
 
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/placeOrders", params = params)
     command.makeAPIRequest[PlaceExecutionReportContainer](sessionToken, request)
@@ -218,7 +218,7 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
           None
       }
     }
-    Await.result(priceBoundRunners, 10 seconds)
+    Await.result(priceBoundRunners, 20 seconds)
   }
 
   def listMarketBook(sessionToken: String, marketIds: Set[String],
