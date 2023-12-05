@@ -102,7 +102,16 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     val params = HashMap[String, Object]("filter" -> marketFilter, "marketProjection" -> marketProjection,
       "sort" -> sort, "maxResults" -> maxResults)
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listMarketCatalogue", params = params)
-    command.makeAPIRequest[ListMarketCatalogueContainer](sessionToken, request)
+    try {
+      command.makeAPIRequest[ListMarketCatalogueContainer](sessionToken, request)
+    } catch {
+      case e: Error =>
+        println("error reading json")
+        Future(None)
+      case _ =>
+        println("error reading json")
+        Future(None)
+    }
   }
 
   def placeOrders(sessionToken: String, marketId: String, instructions: Set[PlaceInstruction]): Future[Option[PlaceExecutionReportContainer]] = {
@@ -212,7 +221,13 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
     ).map { response =>
       response match {
         case Some(listMarketBookContainer) =>
-          Some(filterRunners(listMarketBookContainer.result(0).runners))
+          if (!listMarketBookContainer.result.isEmpty) {
+            Some(filterRunners(listMarketBookContainer.result(0).runners))
+          } else {
+            None
+          }
+        case None =>
+          None
         case error =>
           println("error " + error)
           None
@@ -236,7 +251,16 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
 
     val request = new JsonrpcRequest(id = "1", method = "SportsAPING/v1.0/listMarketBook",
       params = params ++ flattenedOpts.map(i => i._1 -> i._2).toMap)
-    command.makeAPIRequest[ListMarketBookContainer](sessionToken, request)
+    try {
+      command.makeAPIRequest[ListMarketBookContainer](sessionToken, request)
+    } catch {
+      case e: Error =>
+        println("error reading json")
+        Future(None)
+      case _ =>
+        println("error reading json")
+        Future(None)
+    }
   }
 
   def getRunner(sessionToken: String, marketId: String, selectionId: Long): Future[Option[Set[Runner]]] = Future {
@@ -254,6 +278,8 @@ final class BetfairServiceNG(val config: Configuration, command: BetfairServiceN
       response match {
         case Some(listMarketBookContainer) =>
           Some(filterRunners(listMarketBookContainer.result(0).runners))
+        case None =>
+          None
         case error =>
           println("error " + error)
           None

@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers._
-import akka.http.scaladsl.unmarshalling.{FromResponseUnmarshaller, Unmarshal}
+import akka.http.scaladsl.unmarshalling.FromResponseUnmarshaller
 import akka.stream.ActorMaterializer
 import com.betfair.Configuration
 import com.betfair.domain._
@@ -89,7 +89,7 @@ class BetfairServiceNGCommand(val config: Configuration)
     import HttpCharsets._
     import HttpMethods._
     import MediaTypes._
-    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+    import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport.marshaller
 
     implicit val materializer = ActorMaterializer()
 
@@ -100,10 +100,34 @@ class BetfairServiceNGCommand(val config: Configuration)
 
     val headers = Seq(accept, acceptCharset, xApplication, xAuthentication)
 
-    for {
+    (for {
       request <- Marshal(request).to[RequestEntity]
       response <- Http().singleRequest(HttpRequest(
         POST, uri = config.apiUrl, entity = request, headers = headers.toList))
+      entity <- unmarshaller(response)
+    } yield Some(entity)).recover {
+      case _ =>
+        None
+    }
+
+  }
+
+  def makeTennisInsightAPIRequest[T]()(implicit unmarshaller: FromResponseUnmarshaller[T]): Future[Option[T]] = {
+
+    import HttpCharsets._
+    import HttpMethods._
+    import MediaTypes._
+
+    implicit val materializer = ActorMaterializer()
+
+    val accept = Accept(`application/json`)
+    val acceptCharset = `Accept-Charset`(`UTF-8`, HttpCharsetRange.`*`)
+
+    val headers = Seq(accept, acceptCharset)
+
+    for {
+      response <- Http().singleRequest(HttpRequest(
+        GET, uri = "https://tennisinsight.com//api/v1/getTournaments?apiKey=5c944cc3270395c944cc327088", headers = headers.toList))
       entity <- unmarshaller(response)
     } yield Some(entity)
 
